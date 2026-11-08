@@ -1,0 +1,2467 @@
+{% comment %} Calme storefront section. Uses this store's products (tags from the Calme CSV), AJAX cart and Shopify checkout. {% endcomment %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>{% raw %}/* Layout: Apple-style alternating white / canvas-grey bands, centred product heroes, 2x2 promo tiles,
+   SkinCeuticals-style product cards; one quiet slate-blue for actions. Single light look by choice. */
+.calme {
+  --white: #FFFFFF;
+  --canvas: #F5F5F7;
+  --wash: #E8E8ED;
+  --ink: #1D1D1F;
+  --mute: #6E6E73;
+  --hair: #D2D2D7;
+  --blue: #2F5C8A;
+  --blue-hover: #244A71;
+  --badge: #A0522D;
+  --mortar: #7FA3C9;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -.022em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.calme *, .calme *::before, .calme *::after { box-sizing: border-box; }
+.calme img { max-width: 100%; display: block; }
+.calme a { color: var(--blue); text-decoration: none; }
+.calme a:hover { text-decoration: underline; }
+.calme button, .calme input { font: inherit; color: inherit; letter-spacing: inherit; }
+.calme :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+.calme h1, .calme h2, .calme h3, .calme p { margin: 0; }
+.calme h1, .calme h2, .calme h3 { text-wrap: balance; font-weight: 600; }
+.calme .wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+@media (min-width: 760px) { .calme .wrap { padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: max(32px, env(safe-area-inset-right, 0px)); } }
+.calme .band { padding-block: 96px; }
+.calme .band.grey { background: var(--canvas); }
+.calme .center { text-align: center; }
+.calme .muted { color: var(--mute); }
+.calme .eyebrow { font-size: 17px; font-weight: 600; color: var(--badge); letter-spacing: -.01em; }
+.calme .h-xl { font-size: clamp(40px, 6vw, 64px); line-height: 1.06; letter-spacing: -.015em; }
+.calme .h-lg { font-size: clamp(32px, 4.4vw, 48px); line-height: 1.08; letter-spacing: -.01em; }
+.calme .sub { font-size: clamp(19px, 2.2vw, 26px); line-height: 1.25; font-weight: 400; letter-spacing: .004em; }
+.calme .sec-intro { max-width: 680px; margin: 0 auto 48px; display: grid; gap: 12px; text-align: center; }
+.calme .sec-intro p { color: var(--mute); font-size: 19px; }
+.calme .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Buttons */
+.calme .pill { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 22px; border-radius: 980px; border: 1px solid var(--blue); background: transparent; color: var(--blue); font-size: 17px; font-weight: 400; cursor: pointer; white-space: nowrap; text-decoration: none; transition: background .2s, color .2s; }
+.calme .pill:hover { background: var(--blue); color: var(--white); text-decoration: none; }
+.calme .pill.solid, .calme .pill.lime { background: var(--blue); color: var(--white); }
+.calme .pill.solid:hover, .calme .pill.lime:hover { background: var(--blue-hover); border-color: var(--blue-hover); }
+.calme .pill.white { border-color: var(--hair); color: var(--ink); background: var(--white); }
+.calme .pill.sm { min-height: 36px; padding: 0 16px; font-size: 14px; }
+.calme .pill[disabled] { opacity: .4; cursor: not-allowed; }
+.calme .link { color: var(--blue); font-size: 17px; background: none; border: 0; padding: 0; cursor: pointer; }
+.calme .link::after { content: " ›"; }
+.calme .link:hover { text-decoration: underline; }
+.calme .cta-row { display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+/* Ribbon + nav */
+.calme .ribbon { background: var(--canvas); font-size: 14px; text-align: center; padding-block: 12px; color: var(--ink); }
+.calme .ribbon a { text-decoration: underline; text-underline-offset: 2px; }
+.calme .link-btn { background: none; border: 0; padding: 0; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-size: inherit; }
+.calme .hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; background: rgba(250, 250, 252, .82); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0, 0, 0, .06); }
+.calme .hdr-in { display: flex; align-items: center; justify-content: space-between; height: 48px; gap: 16px; }
+.calme .logo { font-size: 21px; font-weight: 600; letter-spacing: .14em; color: var(--ink); }
+.calme .logo:hover { text-decoration: none; }
+.calme .nav { display: flex; gap: 30px; }
+.calme .nav a { color: var(--ink); font-size: 13px; opacity: .85; letter-spacing: -.01em; }
+.calme .nav a:hover { opacity: 1; text-decoration: none; }
+.calme .hdr-right { display: flex; align-items: center; gap: 4px; }
+.calme .icon-btn { min-width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; background: transparent; cursor: pointer; border-radius: 999px; padding: 0 8px; font-size: 13px; }
+.calme .icon-btn:hover { background: var(--wash); }
+.calme .count { min-width: 18px; height: 18px; border-radius: 999px; background: var(--ink); color: var(--white); font-size: 11px; display: inline-flex; align-items: center; justify-content: center; padding: 0 5px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.calme .menu-btn { display: none; }
+@media (max-width: 900px) {
+  .calme .menu-btn { display: inline-flex; }
+  .calme .nav { position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; gap: 0; background: rgba(250, 250, 252, .97); padding: 8px max(16px, env(safe-area-inset-left, 0px)) 20px; border-bottom: 1px solid var(--hair); }
+  .calme .nav:not(.open) { display: none; }
+  .calme .nav a { font-size: 24px; font-weight: 600; padding: 10px 0; opacity: 1; }
+}
+
+/* Hero */
+.calme .hero { padding-block: 64px 0; text-align: center; background: var(--white); }
+.calme .hero .eyebrow { margin-bottom: 8px; }
+.calme .hero .sub { margin-top: 10px; }
+.calme .hero .cta-row { margin-top: 22px; }
+.calme .hero-note { margin-top: 14px; font-size: 14px; color: var(--mute); }
+.calme .hero-img { margin: 24px auto 0; width: min(1100px, 100%); height: auto; }
+.calme .trust { list-style: none; margin: 8px auto 0; padding-block: 22px 30px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; text-align: left; border-top: 1px solid var(--hair); }
+.calme .trust li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--mute); line-height: 1.35; }
+.calme .trust b { display: block; color: var(--ink); font-weight: 600; font-size: 14px; }
+.calme .trust svg { width: 22px; height: 22px; flex: none; color: var(--blue); margin-top: 1px; }
+@media (max-width: 900px) { .calme .trust { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Promo tiles (2 x 2) */
+.calme .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 12px; background: var(--white); }
+.calme .tile { background: var(--canvas); border-radius: 18px; padding: 52px 24px 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; overflow: hidden; min-height: 580px; }
+.calme .tile h2 { font-size: clamp(30px, 3.4vw, 40px); line-height: 1.1; letter-spacing: -.01em; }
+.calme .tile .sub { font-size: clamp(17px, 1.8vw, 21px); }
+.calme .tile .cta-row { margin-top: 12px; }
+.calme .tile img { margin-top: auto; width: min(520px, 100%); height: auto; aspect-ratio: 5 / 4; object-fit: cover; object-position: center 72%; }
+.calme .tile .price-note { font-size: 14px; color: var(--mute); }
+@media (max-width: 760px) {
+  .calme .tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 84%; overflow-x: auto; scroll-snap-type: x mandatory; padding: 12px 16px; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .calme .tiles::-webkit-scrollbar { display: none; }
+  .calme .tile { scroll-snap-align: start; min-height: 470px; padding-top: 40px; }
+}
+
+/* Shop */
+.calme .controls { display: flex; flex-direction: column; gap: 16px; align-items: center; margin-bottom: 40px; }
+.calme .seg { display: inline-flex; background: var(--wash); border-radius: 999px; padding: 3px; gap: 2px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.calme .seg::-webkit-scrollbar { display: none; }
+.calme .seg button { flex: none; }
+.calme .seg button { border: 0; background: transparent; border-radius: 999px; min-height: 36px; padding: 0 18px; font-size: 14px; cursor: pointer; color: var(--ink); }
+.calme .seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); font-weight: 600; }
+.calme .concerns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.calme .concerns span { font-size: 14px; color: var(--mute); margin-right: 4px; }
+.calme .concerns button { min-height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--hair); background: var(--white); font-size: 14px; cursor: pointer; }
+.calme .concerns button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--white); }
+.calme .search { display: flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--hair); border-radius: 12px; padding: 0 14px; min-height: 44px; width: min(360px, 100%); }
+.calme .search input { border: 0; outline: 0; background: transparent; min-width: 0; flex: 1; font-size: 15px; }
+.calme .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 20px; }
+.calme .card { background: var(--white); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+.calme .card-img { border: 0; padding: 0; background: linear-gradient(180deg, var(--white) 55%, color-mix(in srgb, var(--canvas) 55%, var(--white))); cursor: pointer; aspect-ratio: 5 / 4; display: block; width: 100%; overflow: hidden; }
+.calme .card-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 72%; transition: transform .5s ease; }
+.calme .card-img:hover img { transform: scale(1.03); }
+.calme .card-body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.calme .badge { font-size: 12px; font-weight: 600; color: var(--badge); letter-spacing: 0; min-height: 16px; }
+.calme .card h3 { font-size: 19px; line-height: 1.2; letter-spacing: -.01em; }
+.calme .benefit { font-size: 15px; color: var(--ink); }
+.calme .meta { font-size: 13px; color: var(--mute); }
+.calme .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: auto; padding-top: 16px; }
+.calme .price { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.calme .price s { color: var(--mute); font-weight: 400; margin-left: 6px; font-size: .88em; }
+.calme .empty { padding: 40px 0; text-align: center; color: var(--mute); grid-column: 1 / -1; }
+/* phones: two products per row, like most shops, so the range fits in a few swipes */
+@media (max-width: 640px) {
+  .calme .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .calme .card { border-radius: 14px; }
+  .calme .card-img { aspect-ratio: 1; }
+  .calme .card-img img { object-position: center 62%; }
+  .calme .card-body { padding: 12px 12px 14px; gap: 3px; }
+  .calme .card h3 { font-size: 15px; }
+  .calme .benefit { font-size: 13px; line-height: 1.3; }
+  .calme .meta { font-size: 12px; }
+  .calme .badge { font-size: 11px; min-height: 14px; }
+  .calme .card-foot { flex-direction: column; align-items: stretch; gap: 8px; padding-top: 10px; }
+  .calme .card-foot .pill { width: 100%; min-height: 40px; }
+  .calme .controls { align-items: stretch; }
+  .calme .seg { display: flex; width: 100%; }
+  .calme .seg button { flex: 1 1 auto; padding: 0 8px; font-size: 13px; }
+  .calme .concerns { justify-content: flex-start; }
+  .calme .search { width: 100%; }
+}
+
+/* Specs */
+.calme .specs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair); }
+.calme .spec { padding: 32px 24px 32px 0; border-bottom: 1px solid var(--hair); display: grid; gap: 6px; align-content: start; }
+.calme .spec b { font-size: clamp(40px, 5vw, 56px); line-height: 1; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.calme .spec span { font-size: 17px; font-weight: 600; }
+.calme .spec p { font-size: 15px; color: var(--mute); max-width: 32ch; }
+.calme sup { font-size: .6em; vertical-align: super; line-height: 0; }
+@media (max-width: 760px) { .calme .specs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .calme .spec { padding-right: 12px; } }
+@media (max-width: 440px) { .calme .specs { grid-template-columns: minmax(0, 1fr); } }
+
+/* Routine finder */
+.calme .rb-opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.calme .rb-opts label { background: var(--white); border-radius: 18px; padding: 20px; cursor: pointer; display: grid; gap: 6px; border: 2px solid transparent; transition: border-color .2s; }
+.calme .rb-opts label:has(input:checked) { border-color: var(--blue); }
+.calme .rb-opts input { position: absolute; opacity: 0; pointer-events: none; }
+.calme .rb-opts label:has(input:focus-visible) { outline: 2px solid var(--blue); outline-offset: 3px; }
+.calme .rb-opts b { font-size: 17px; }
+.calme .rb-opts span { font-size: 14px; color: var(--mute); }
+.calme .rb-out { background: var(--white); border-radius: 18px; padding: 32px; display: grid; gap: 24px; }
+.calme .rb-note { font-size: 17px; color: var(--mute); max-width: 70ch; }
+.calme .rb-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.calme .rb-col h3 { font-size: 14px; color: var(--mute); font-weight: 600; margin-bottom: 10px; text-transform: none; letter-spacing: 0; }
+.calme .rb-col ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; }
+.calme .rb-col li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; padding: 12px 0; border-top: 1px solid var(--hair); counter-increment: s; }
+.calme .rb-col li::before { content: counter(s); width: 24px; height: 24px; border-radius: 999px; background: var(--canvas); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.calme .rb-col li span { font-size: 16px; font-weight: 500; }
+.calme .rb-col li small { display: block; color: var(--mute); font-size: 14px; font-weight: 400; }
+.calme .rb-picks { display: flex; gap: 10px; flex-wrap: wrap; }
+.calme .rb-pick { display: flex; align-items: center; gap: 10px; background: var(--canvas); border: 0; border-radius: 14px; padding: 6px 14px 6px 6px; cursor: pointer; text-align: left; }
+.calme .rb-pick img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; }
+.calme .rb-pick span { font-size: 13px; line-height: 1.3; }
+.calme .rb-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--hair); padding-top: 20px; }
+.calme .rb-total { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 900px) { .calme .rb-opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .calme .rb-cols { grid-template-columns: minmax(0, 1fr); } .calme .rb-out { padding: 22px; } }
+
+/* Promise columns */
+.calme .promise { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+.calme .promise div { display: grid; gap: 10px; align-content: start; }
+.calme .promise svg { width: 40px; height: 40px; color: var(--blue); }
+.calme .promise h3 { font-size: 21px; }
+.calme .promise p { color: var(--mute); font-size: 16px; }
+@media (max-width: 760px) { .calme .promise { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+
+/* FAQ */
+.calme .faq { max-width: 820px; margin: 0 auto; }
+.calme details { border-bottom: 1px solid var(--hair); padding-block: 20px; }
+.calme summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; font-size: 19px; font-weight: 600; }
+.calme summary::-webkit-details-marker { display: none; }
+.calme summary::after { content: "+"; font-weight: 300; font-size: 26px; line-height: 1; color: var(--mute); }
+.calme details[open] summary::after { content: "−"; }
+.calme details p { margin-top: 10px; color: var(--mute); max-width: 68ch; }
+
+/* Footer */
+.calme .foot { background: var(--canvas); color: var(--mute); font-size: 12px; line-height: 1.5; letter-spacing: -.01em; padding-block: 24px 32px; }
+.calme .foot-notes { display: grid; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--hair); }
+.calme .foot-notes p { max-width: 980px; }
+.calme .foot-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; padding-block: 20px; border-bottom: 1px solid var(--hair); }
+.calme .foot-cols h3 { font-size: 12px; color: var(--ink); font-weight: 600; margin-bottom: 8px; letter-spacing: -.01em; }
+.calme .foot-cols a { display: block; color: var(--mute); padding: 4px 0; }
+.calme .foot-cols a:hover { color: var(--ink); }
+.calme .news { display: flex; gap: 8px; margin-top: 4px; }
+.calme .news input { flex: 1; min-width: 0; min-height: 36px; border: 1px solid var(--hair); border-radius: 10px; padding: 0 12px; background: var(--white); font-size: 13px; }
+.calme .news .pill { min-height: 36px; padding: 0 14px; font-size: 13px; }
+.calme .foot-base { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 16px; }
+.calme .mode-note { padding-top: 8px; }
+.calme .foot-link { display: block; background: none; border: 0; padding: 4px 0; color: var(--mute); font-size: 12px; cursor: pointer; text-align: left; letter-spacing: -.01em; }
+.calme .foot-link:hover { color: var(--ink); text-decoration: underline; }
+.calme .news-note { margin-top: 6px; font-size: 11px; }
+.calme .socials { display: flex; align-items: center; gap: 4px; margin-top: 12px; }
+.calme .socials span { margin-right: 6px; }
+.calme .socials a { width: 36px; height: 36px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink); background: var(--white); border: 1px solid var(--hair); }
+.calme .socials svg { width: 18px; height: 18px; }
+@media (max-width: 760px) {
+  .calme .foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calme .foot-news { grid-column: 1 / -1; }
+  .calme .news input { min-height: 44px; font-size: 16px; }
+  .calme .news .pill { min-height: 44px; }
+}
+
+/* Bag drawer */
+.calme .scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, .28); z-index: 80; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.calme .scrim.on { opacity: 1; pointer-events: auto; }
+.calme .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100%); background: var(--white); z-index: 90; transform: translateX(100%); transition: transform .35s cubic-bezier(.2, .8, .2, 1); display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); box-shadow: -20px 0 50px -20px rgba(0, 0, 0, .25); }
+.calme .drawer.on { transform: none; }
+.calme .dr-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; }
+.calme .dr-head h2 { font-size: 24px; }
+.calme .ship { padding: 0 20px 14px; display: grid; gap: 8px; font-size: 14px; color: var(--mute); }
+.calme .ship b { color: var(--ink); font-weight: 600; }
+.calme .bar { height: 4px; border-radius: 2px; background: var(--wash); overflow: hidden; }
+.calme .bar i { display: block; height: 100%; background: var(--blue); transition: width .4s; }
+.calme .dr-body { flex: 1; overflow-y: auto; padding: 0 20px; border-top: 1px solid var(--hair); }
+.calme .line { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--hair); }
+.calme .line img { width: 76px; height: 76px; object-fit: cover; border-radius: 12px; background: var(--canvas); }
+.calme .line-top { display: flex; justify-content: space-between; gap: 8px; font-size: 15px; }
+.calme .line-top b { font-weight: 600; }
+.calme .qty { display: inline-flex; align-items: center; background: var(--canvas); border-radius: 999px; height: 36px; margin-top: 10px; }
+.calme .qty button { width: 38px; height: 36px; border: 0; background: transparent; cursor: pointer; font-size: 17px; border-radius: 999px; }
+.calme .qty span { min-width: 20px; text-align: center; font-variant-numeric: tabular-nums; font-size: 15px; }
+.calme .rm { border: 0; background: none; cursor: pointer; font-size: 14px; color: var(--blue); margin-left: 12px; min-height: 36px; }
+.calme .upsell { margin: 18px 0; border-radius: 14px; background: var(--canvas); padding: 12px; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 14px; }
+.calme .upsell img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; }
+.calme .upsell small { display: block; color: var(--badge); font-size: 12px; font-weight: 600; }
+.calme .dr-foot { padding: 16px 20px 20px; border-top: 1px solid var(--hair); display: grid; gap: 8px; }
+.calme .sub-row { display: flex; justify-content: space-between; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.calme .dr-empty { padding: 48px 0; text-align: center; display: grid; gap: 16px; justify-items: center; color: var(--mute); }
+
+/* Dialogs */
+.calme dialog { border: 0; padding: 0; border-radius: 18px; width: min(900px, calc(100% - 32px)); max-height: calc(100% - 32px); background: var(--white); color: var(--ink); }
+.calme dialog::backdrop { background: rgba(0, 0, 0, .3); backdrop-filter: blur(6px); }
+.calme .qv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.calme .qv-img { background: var(--canvas); }
+.calme .qv-img img { width: 100%; height: 100%; object-fit: cover; }
+.calme .qv-info { padding: 36px 32px 28px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto; }
+.calme .qv-info h2 { font-size: 32px; line-height: 1.1; padding-right: 40px; }
+.calme .qv-info .price { font-size: 21px; }
+.calme .chip { align-self: flex-start; font-size: 12px; font-weight: 600; color: var(--badge); }
+.calme .x { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; border: 0; background: var(--canvas); cursor: pointer; font-size: 20px; z-index: 2; }
+.calme .opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.calme .opts button { min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--hair); background: var(--white); cursor: pointer; font-size: 15px; }
+.calme .opts button[aria-pressed="true"] { border: 2px solid var(--blue); }
+.calme .qv-detail h3 { font-size: 15px; margin: 10px 0 4px; }
+.calme .qv-links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; }
+.calme .camp { font-size: 12px; color: var(--mute); text-align: center; }
+.calme .qv-detail p, .calme .qv-detail li { font-size: 15px; color: var(--mute); }
+.calme .qv-detail ul { margin: 0; padding-left: 18px; }
+.calme .buy-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.calme .buy-row .qty { margin: 0; height: 44px; }
+.calme .buy-row .pill { flex: 1 1 200px; }
+@media (max-width: 720px) { .calme .qv { grid-template-columns: minmax(0, 1fr); } .calme .qv-img { aspect-ratio: 1; } .calme .qv-info { padding: 24px 20px; } }
+
+/* Demo checkout */
+.calme .co { padding: 36px 32px; display: grid; gap: 22px; position: relative; }
+.calme .co h2 { font-size: 32px; }
+.calme .co-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; }
+.calme .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.calme .field { display: grid; gap: 6px; }
+.calme .field.full { grid-column: 1 / -1; }
+.calme .field label { font-size: 13px; color: var(--mute); }
+.calme .field input { width: 100%; min-width: 0; min-height: 48px; border-radius: 12px; border: 1px solid var(--hair); padding: 0 14px; font-size: 17px; background: var(--white); }
+.calme fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+.calme legend { font-size: 19px; font-weight: 600; margin-bottom: 8px; }
+.calme .radio { display: flex; gap: 12px; align-items: center; border: 1px solid var(--hair); border-radius: 12px; padding: 14px; cursor: pointer; }
+.calme .radio:has(input:checked) { border: 2px solid var(--blue); padding: 13px; }
+.calme .radio input { accent-color: var(--blue); width: 18px; height: 18px; }
+.calme .radio small { display: block; color: var(--mute); font-size: 14px; }
+.calme .summary { background: var(--canvas); border-radius: 18px; padding: 22px; display: grid; gap: 10px; align-content: start; font-size: 15px; }
+.calme .summary .row { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.calme .summary .tot { font-size: 19px; font-weight: 600; border-top: 1px solid var(--hair); padding-top: 12px; }
+.calme .code-row { display: flex; gap: 8px; }
+.calme .code-row input { flex: 1; min-width: 0; min-height: 40px; border-radius: 10px; border: 1px solid var(--hair); padding: 0 12px; text-transform: uppercase; background: var(--white); }
+.calme .msg { font-size: 13px; min-height: 18px; }
+.calme .msg.err { color: #B3261E; }
+.calme .msg.ok { color: #1E7A43; }
+.calme .demo-flag { font-size: 14px; color: var(--mute); background: var(--canvas); border-radius: 12px; padding: 12px 14px; }
+.calme .done { text-align: center; display: grid; gap: 12px; justify-items: center; padding: 24px 0; }
+.calme .done .tick { width: 56px; height: 56px; border-radius: 999px; background: var(--blue); color: var(--white); display: inline-flex; align-items: center; justify-content: center; }
+@media (max-width: 760px) { .calme .co { padding: 24px 20px; } .calme .co-grid, .calme .fields { grid-template-columns: minmax(0, 1fr); } }
+
+/* Toast */
+.calme .toast { visibility: hidden; position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 140%); background: rgba(29, 29, 31, .92); color: var(--white); border-radius: 14px; padding: 12px 16px; font-size: 15px; z-index: 120; transition: transform .35s cubic-bezier(.2, .8, .2, 1); max-width: calc(100% - 32px); display: flex; gap: 14px; align-items: center; backdrop-filter: blur(10px); }
+.calme .toast.on { transform: translate(-50%, 0); visibility: visible; }
+.calme .toast button { background: none; border: 0; color: #8DB8E6; font-size: 15px; cursor: pointer; padding: 6px 0; }
+@media (prefers-reduced-motion: reduce) { .calme * { transition: none !important; animation: none !important; } }
+
+/* ---------- Colour schemes ---------- */
+.calme[data-palette="sage"] { --canvas: #F2F4F0; --wash: #E3E8E1; --ink: #1D2420; --mute: #626D66; --hair: #D2D9D1; --blue: #3E6B5A; --blue-hover: #30574A; --badge: #8A6D3B; --mortar: #82AD96; }
+.calme[data-palette="oat"] { --canvas: #F6F2EC; --wash: #ECE5DB; --ink: #2A2420; --mute: #6F665E; --hair: #DDD4C8; --blue: #8E5338; --blue-hover: #74432D; --badge: #5E6B4E; --mortar: #C99A72; }
+.calme[data-palette="dusk"] { --canvas: #F4F4F8; --wash: #E6E6EF; --ink: #1C1D2A; --mute: #676979; --hair: #D5D6E1; --blue: #4F5596; --blue-hover: #40457D; --badge: #9A5B6E; --mortar: #8F94CF; }
+/* Reference palettes: Quiet Luxury · Modern Minimal · Soft Editorial */
+.calme[data-palette="luxe"] { --white: #FDFDFB; --canvas: #F3F5F8; --wash: #E4EAF1; --ink: #1E2530; --mute: #5A6472; --hair: #D5DDE7; --blue: #5B6E86; --blue-hover: #4A5B71; --badge: #6F5647; --mortar: #B7C9DD; }
+.calme[data-palette="minimal"] { --white: #FAFAF8; --canvas: #F0F0EE; --wash: #E4E4E2; --ink: #2A221D; --mute: #66605B; --hair: #D9D9D9; --blue: #3A2F28; --blue-hover: #52443A; --badge: #476B88; --mortar: #C1D8E8; }
+.calme[data-palette="editorial"] { --white: #FAF7F2; --canvas: #F3EDE4; --wash: #E9DFD2; --ink: #2B2420; --mute: #6B6158; --hair: #E0D3C3; --blue: #6B4F3F; --blue-hover: #574031; --badge: #4F6A8F; --mortar: #8FA7C6; }
+.calme .palette { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 70; display: flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, .86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--hair); border-radius: 999px; padding: 5px 6px 5px 14px; font-size: 12px; color: var(--mute); box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .35); }
+.calme .palette { padding: 4px; }
+.calme .pal-opts { display: none; align-items: center; gap: 4px; padding-left: 4px; }
+.calme .palette.open .pal-opts { display: flex; }
+.calme .pal-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px 0 6px; border-radius: 999px; border: 0; background: transparent; cursor: pointer; font-size: 12px; color: var(--ink); }
+.calme .pal-toggle i { width: 18px; height: 18px; border-radius: 50%; display: block; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); }
+.calme .palette .sep { width: 1px; height: 20px; background: var(--hair); margin: 0 4px; }
+.calme .palette button { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px 0 6px; border-radius: 999px; border: 1px solid transparent; background: transparent; cursor: pointer; font-size: 12px; color: var(--ink); }
+.calme .palette button i { width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); display: block; }
+.calme .palette button[aria-pressed="true"] { border-color: var(--ink); background: var(--white); }
+@media (max-width: 560px) { .calme .pal-opts button span { display: none; } .calme .pal-opts button { padding: 0 6px; } .calme .palette.open { right: 16px; flex-wrap: wrap; border-radius: 22px; } }
+/* cookie choices (PDPA), privacy notice and the pixel inspector */
+.calme .consent { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 110; width: min(680px, calc(100% - 24px)); background: rgba(255, 255, 255, .97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--hair); border-radius: 18px; box-shadow: 0 20px 50px -24px rgba(0, 0, 0, .35); padding: 16px 18px; display: flex; gap: 16px; align-items: center; font-size: 14px; }
+.calme .consent[hidden] { display: none; }
+.calme .consent p { flex: 1; color: var(--ink); }
+.calme .consent-btns { display: flex; gap: 8px; flex: none; }
+@media (max-width: 640px) { .calme .consent { flex-direction: column; align-items: stretch; } .calme .consent-btns .pill { flex: 1; } }
+.calme .privacy { padding: 36px 32px 28px; display: grid; gap: 10px; position: relative; max-width: 680px; }
+.calme .privacy h2 { font-size: 28px; padding-right: 40px; }
+.calme .privacy h3 { font-size: 16px; margin-top: 8px; }
+.calme .privacy p, .calme .privacy li { font-size: 15px; color: var(--mute); }
+.calme .privacy ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.calme #c-privacy { width: min(680px, calc(100% - 32px)); }
+.calme .px { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); top: 104px; z-index: 75; width: min(340px, calc(100% - 32px)); font-size: 12px; }
+.calme .px[hidden] { display: none; }
+.calme .px-toggle { margin-left: auto; display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--hair); background: rgba(255, 255, 255, .92); backdrop-filter: blur(12px); cursor: pointer; font-size: 12px; }
+.calme .px-toggle span { min-width: 20px; height: 20px; border-radius: 999px; background: var(--blue); color: var(--white); display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; font-variant-numeric: tabular-nums; }
+.calme .px-log { margin-top: 8px; background: rgba(255, 255, 255, .97); border: 1px solid var(--hair); border-radius: 14px; box-shadow: 0 20px 50px -24px rgba(0, 0, 0, .35); max-height: min(60vh, 460px); overflow: auto; padding: 12px; }
+.calme .px-head { color: var(--mute); margin-bottom: 8px; }
+.calme .px-log ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.calme .px-log li { display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; background: var(--canvas); }
+.calme .px-log li b { font-size: 13px; }
+.calme .px-st { color: var(--badge); font-weight: 600; }
+.calme .px-log small { color: var(--mute); font-size: 11px; }
+
+/* ---------- 3D intro ---------- */
+.calme .intro { position: relative; height: 470vh; background: var(--intro-bg, var(--canvas)); }
+.calme .intro-stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.calme #c-3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.calme .beats { position: absolute; inset: 0; pointer-events: none; }
+.calme .beat { position: absolute; left: max(32px, 7vw); top: 54%; transform: translateY(-50%); max-width: 430px; opacity: 0; visibility: hidden; }
+.calme .beat[data-beat="0"] { opacity: 1; visibility: visible; }
+.calme .beat h2 { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.08; letter-spacing: -.012em; }
+.calme .beat p { font-size: clamp(16px, 1.5vw, 19px); color: var(--mute); margin-top: 12px; }
+.calme .beat .eyebrow { margin: 0 0 8px; font-size: 15px; color: var(--badge); }
+.calme .beat.center { left: 0; right: 0; top: 13%; margin: 0 auto; text-align: center; max-width: 780px; padding: 0 20px; transform: none; }
+.calme .beat.center .sub { margin-top: 12px; }
+.calme .beat[data-beat="4"] { top: 16%; }
+.calme .cue { display: inline-flex; gap: 6px; align-items: center; font-size: 14px !important; margin-top: 20px !important; }
+.calme .cue svg { animation: calme-bob 1.8s ease-in-out infinite; }
+@keyframes calme-bob { 50% { transform: translateY(4px); } }
+.calme .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; margin: 0 2px; }
+.calme .dot.water { background: #8EC3E8; }
+.calme .dot.irr { background: #D9A15B; }
+.calme .skip { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); font-size: 13px; background: rgba(255, 255, 255, .78); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 999px; z-index: 3; }
+.calme .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: rgba(0, 0, 0, .05); }
+.calme .progress i { display: block; height: 100%; width: 100%; background: var(--blue); transform: scaleX(0); transform-origin: left center; will-change: transform; }
+@media (max-width: 900px) {
+  .calme .beat { left: 20px; right: 20px; top: auto; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); transform: none !important; max-width: none; text-align: center; background: rgba(255, 255, 255, .82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; padding: 18px; }
+  .calme .beat.center { top: 11%; bottom: auto; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0 16px; }
+}
+/* No WebGL / no script: the story reads as a simple stacked section */
+.calme .intro.static { height: auto; }
+.calme .intro.static .intro-stick { position: relative; height: auto; padding-block: 96px 48px; display: block; }
+.calme .intro.static #c-3d, .calme .intro.static .skip, .calme .intro.static .progress, .calme .intro.static .cue { display: none; }
+.calme .intro.static .beats { position: relative; display: grid; gap: 48px; }
+.calme .intro.static .beat { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; margin: 0 auto; text-align: center; max-width: 680px; background: none; padding: 0 20px; }
+{% endraw %}</style>
+{%- unless section.settings.show_header -%}<style>#calme [data-part="header"]{display:none}</style>{%- endunless -%}
+{%- unless section.settings.show_footer -%}<style>#calme [data-part="footer"]{display:none}</style>{%- endunless -%}
+{% raw %}<div class="calme" id="calme">
+<aside class="ribbon" aria-label="Offers"><p class="wrap"><span id="c-offer">Free delivery on orders over S$60. Try the Discovery Kit for S$19 and get S$19 back. <a href="#c-kit" data-open="discovery-kit">Shop the kit</a></span></p></aside>
+
+<header class="hdr" data-part="header">
+  <div class="wrap hdr-in">
+    <a class="logo" href="#calme" aria-label="Calme home">CALME</a>
+    <nav class="nav" id="c-nav" aria-label="Main">
+      <a href="#c-shop" data-filter-link="all">Shop</a>
+      <a href="#c-shop" data-filter-link="cleanse">Cleanse</a>
+      <a href="#c-shop" data-filter-link="treat">Treat</a>
+      <a href="#c-shop" data-filter-link="moisturise">Moisturise</a>
+      <a href="#c-routine">Routine Finder</a>
+      <a href="#c-science">Science</a>
+      <a href="#c-faq">Support</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn" id="c-search-jump" aria-label="Search products">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+      <button class="icon-btn" id="c-cart-btn" aria-label="Open bag, 0 items">
+        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="count" id="c-count">0</span>
+      </button>
+      <button class="icon-btn menu-btn" id="c-menu" aria-expanded="false" aria-controls="c-nav" aria-label="Open menu">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 9h16M4 15h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="c-main">
+<section class="intro" id="c-intro" aria-label="Introducing Calme">
+  <div class="intro-stick">
+    <canvas id="c-3d" aria-hidden="true"></canvas>
+    <div class="beats">
+      <div class="beat center" data-beat="0">
+        <p class="eyebrow">Introducing Calme</p>
+        <h2 class="h-xl">Skincare for skin that reacts.</h2>
+        <p class="sub muted">Fragrance-free, barrier-first care for eczema-prone skin, made in Singapore.</p>
+        <p class="cue" aria-hidden="true">Scroll to see how it works <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></p>
+      </div>
+      <div class="beat" data-beat="1"><p class="eyebrow">The skin barrier</p><h2>Healthy skin holds on to water.</h2><p>The top layer of skin is a seal of flattened cells. Beneath it, water and lipids keep skin cushioned, supple and calm.</p></div>
+      <div class="beat" data-beat="2"><p class="eyebrow">Eczema-prone skin</p><h2>When the barrier cracks, moisture escapes.</h2><p>Gaps open between skin cells. Water drains away and irritants <span class="dot irr"></span> like sweat and fragrance get in, so skin turns tight, hot and itchy.</p></div>
+      <div class="beat" data-beat="3"><p class="eyebrow">What Calme does</p><h2>Calme helps seal it back.</h2><p>Ceramides, cholesterol and fatty acids in a 3:1:1 ratio, the same ratio healthy skin uses, fill the gaps so skin can hold water again.</p></div>
+      <div class="beat center" data-beat="4"><p class="eyebrow">Barrier-first skincare</p><h2 class="h-xl">This is Calme.</h2></div>
+    </div>
+    <a class="skip" href="#c-hero" id="c-skip">Skip intro</a>
+    <div class="progress" aria-hidden="true"><i></i></div>
+  </div>
+</section>
+
+<section class="hero" id="c-hero" aria-labelledby="c-hero-h">
+  <div class="wrap">
+    <p class="eyebrow">For eczema-prone skin</p>
+    <h1 class="h-xl" id="c-hero-h">Barrier Reset Routine</h1>
+    <p class="sub">Calm, from the barrier up.</p>
+    <div class="cta-row">
+      <button class="pill solid" data-add="barrier-reset-routine">Buy</button>
+      <button class="pill" data-open="barrier-reset-routine">Learn more</button>
+    </div>
+    <p class="hero-note">Four fragrance-free steps. S$128, or S$16 less than buying separately.</p>
+  </div>
+  <img class="hero-img" data-img="hero" loading="lazy" decoding="async" width="1600" height="800" alt="Barrier Cleansing Oil, Gentle Cream Cleanser, Ceramide Recovery Serum and Barrier Repair Cream in Calme frosted glass bottles">
+  <ul class="trust wrap" aria-label="Shopping with Calme">
+    <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg><span><b>Free delivery over S$60</b>1 to 2 working days in Singapore</span></li>
+    <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg><span><b>PayNow or bank transfer</b>Checkout by Shopify</span></li>
+    <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c4 4.5 6.5 8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 11 8 7.5 12 3z"/><path d="M5 5l14 14"/></svg><span><b>Fragrance-free, every product</b>No essential oils or drying alcohol</span></li>
+    <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12l5 5L20 6"/></svg><span><b>Try first for S$19</b>Five minis, S$19 back later</span></li>
+  </ul>
+</section>
+
+<section class="tiles" aria-label="Featured products">
+  <div class="tile">
+    <h2>Ceramide Recovery Serum</h2>
+    <p class="sub">Rebuild what your barrier is missing.</p>
+    <div class="cta-row"><button class="pill solid sm" data-add="ceramide-recovery-serum">Buy</button><button class="pill sm" data-open="ceramide-recovery-serum">Learn more</button></div>
+    <img data-img="ceramide-recovery-serum" loading="lazy" decoding="async" width="800" height="800" alt="Ceramide Recovery Serum glass dropper bottle">
+  </div>
+  <div class="tile" id="c-kit">
+    <h2>Discovery Kit</h2>
+    <p class="sub">Try the routine for 14 days.</p>
+    <p class="price-note"><span id="c-kit-price">S$19</span>, with S$19 back on your first full-size order.</p>
+    <div class="cta-row"><button class="pill solid sm" data-add="discovery-kit">Buy</button><button class="pill sm" data-open="discovery-kit">What's inside</button></div>
+    <img data-img="discovery-kit" loading="lazy" decoding="async" width="800" height="800" alt="Five Calme travel-size products">
+  </div>
+  <div class="tile">
+    <h2>Barrier Repair Cream</h2>
+    <p class="sub">Seal it in, within three minutes.</p>
+    <div class="cta-row"><button class="pill solid sm" data-open="barrier-repair-cream">Buy</button><button class="pill sm" data-open="barrier-repair-cream">Learn more</button></div>
+    <img data-img="barrier-repair-cream" loading="lazy" decoding="async" width="800" height="800" alt="Barrier Repair Cream jar">
+  </div>
+  <div class="tile">
+    <h2>Centella Calming Serum</h2>
+    <p class="sub">For the hot, red days.</p>
+    <div class="cta-row"><button class="pill solid sm" data-add="centella-calming-serum">Buy</button><button class="pill sm" data-open="centella-calming-serum">Learn more</button></div>
+    <img data-img="centella-calming-serum" loading="lazy" decoding="async" width="800" height="800" alt="Centella Calming Serum glass dropper bottle">
+  </div>
+</section>
+
+<section class="band grey" id="c-shop" aria-labelledby="c-shop-h">
+  <div class="wrap">
+    <div class="sec-intro">
+      <h2 class="h-lg" id="c-shop-h">Shop the range.</h2>
+      <p>Nine products, three steps. Browse by step or by what your skin needs today.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Filter by step" id="c-filters">
+        <button data-f="all" aria-pressed="true">All</button>
+        <button data-f="cleanse" aria-pressed="false">Cleanse</button>
+        <button data-f="treat" aria-pressed="false">Treat</button>
+        <button data-f="moisturise" aria-pressed="false">Moisturise</button>
+        <button data-f="sets" aria-pressed="false">Sets</button>
+      </div>
+      <div class="concerns" role="group" aria-label="Filter by skin concern" id="c-concerns">
+        <span>Skin concern</span>
+        <button data-c="any" aria-pressed="true">Any</button>
+        <button data-c="flare" aria-pressed="false">Flare-ups &amp; redness</button>
+        <button data-c="dry" aria-pressed="false">Dryness &amp; tightness</button>
+        <button data-c="texture" aria-pressed="false">Rough texture</button>
+      </div>
+      <label class="search" for="c-q"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span class="sr">Search products</span><input id="c-q" type="search" placeholder="Search ceramide, retinol, cleanser"></label>
+    </div>
+    <div class="grid" id="c-grid" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="band" id="c-science" aria-labelledby="c-sci-h">
+  <div class="wrap">
+    <div class="sec-intro">
+      <p class="eyebrow">Formulation</p>
+      <h2 class="h-lg" id="c-sci-h">The numbers behind calm.</h2>
+      <p>Every Calme product starts from what a stressed barrier is missing, and leaves out what tends to irritate it.</p>
+    </div>
+    <div class="specs">
+      <div class="spec"><b>3:1:1</b><span>Barrier lipid ratio</span><p>Ceramides, cholesterol and fatty acids, the ratio found in healthy skin. Ceramide Recovery Serum.</p></div>
+      <div class="spec"><b>pH 5.5</b><span>Matches your skin</span><p>A soap-free cream wash that cleans without the tight, squeaky feeling. Gentle Cream Cleanser.</p></div>
+      <div class="spec"><b>1%</b><span>Colloidal oatmeal</span><p>A recognised skin protectant that helps relieve dry, itchy-feeling skin. Barrier Repair Cream.</p></div>
+      <div class="spec"><b>0</b><span>Fragrance or essential oils</span><p>Left out of every product, along with drying alcohol, SLS and parabens.<sup>1</sup></p></div>
+      <div class="spec"><b>5%</b><span>Panthenol</span><p>Pro-vitamin B5 with centella to soothe visible redness. Centella Calming Serum.</p></div>
+      <div class="spec"><b>0.1%</b><span>Encapsulated retinol</span><p>A slow-release first retinoid, buffered with ceramides. Calm skin only. Night Renew Retinol.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band grey" id="c-routine" aria-labelledby="c-rb-h">
+  <div class="wrap">
+    <div class="sec-intro">
+      <p class="eyebrow">Routine Finder</p>
+      <h2 class="h-lg" id="c-rb-h">Which routine is right for you?</h2>
+      <p>Tell us how your skin feels today. We'll lay out a morning and evening routine from the Calme range.</p>
+    </div>
+    <div class="rb-opts" id="c-rb-opts" role="radiogroup" aria-label="How your skin feels today">
+      <label><input type="radio" name="c-skin" value="flare" id="c-skin-flare"><b>Flaring now</b><span>Hot, red, itchy or tight patches.</span></label>
+      <label><input type="radio" name="c-skin" value="dry" id="c-skin-dry" checked><b>Dry and tight</b><span>Uncomfortable after washing.</span></label>
+      <label><input type="radio" name="c-skin" value="texture" id="c-skin-texture"><b>Calm, but rough</b><span>Ready for a gentle acid or retinol.</span></label>
+      <label><input type="radio" name="c-skin" value="new" id="c-skin-new"><b>Just curious</b><span>Try before you commit.</span></label>
+    </div>
+    <div class="rb-out" id="c-rb-out" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="c-pr-h">
+  <div class="wrap">
+    <div class="sec-intro"><h2 class="h-lg" id="c-pr-h">Made for skin that reacts.</h2></div>
+    <div class="promise">
+      <div>
+        <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 5c6 7 10 12 10 18a10 10 0 0 1-20 0c0-6 4-11 10-18z"/><path d="M14 24a6 6 0 0 0 6 6"/></svg>
+        <h3>Fragrance-free. Always.</h3>
+        <p>No fragrance, no essential oils, no drying alcohol. The most common triggers stay out of every formula.</p>
+      </div>
+      <div>
+        <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="20" cy="20" r="7"/><path d="M20 4v5M20 31v5M4 20h5M31 20h5M8.7 8.7l3.5 3.5M27.8 27.8l3.5 3.5M8.7 31.3l3.5-3.5M27.8 12.2l3.5-3.5"/></svg>
+        <h3>Made for 32°C.</h3>
+        <p>Textures that sink in fast, built for Singapore's heat and humidity rather than a cold winter.</p>
+      </div>
+      <div>
+        <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 5l12 5v9c0 8-5 13-12 16C13 32 8 27 8 19v-9z"/><path d="M15 20l4 4 7-8"/></svg>
+        <h3>Honest claims.</h3>
+        <p>Calme is cosmetic skincare for eczema-prone skin, not medicine. We tell you when to patch test and when to see a doctor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band grey" id="c-faq" aria-labelledby="c-faq-h">
+  <div class="wrap">
+    <div class="sec-intro"><h2 class="h-lg" id="c-faq-h">Questions? Answers.</h2></div>
+    <div class="faq">
+      <details open><summary>Will Calme treat my eczema?</summary><p>No skincare can promise that. Calme supports a healthy skin barrier and comforts dryness. Keep using anything your doctor prescribes, and see a doctor for flare-ups that don't settle.</p></details>
+      <details><summary>Can I use acids and retinol on eczema-prone skin?</summary><p>Only when skin is calm. Use PHA Gentle Exfoliant and Night Renew Retinol on two evenings a week each, never on the same night and never during a flare. Patch test first.</p></details>
+      <details><summary>How do I pay?</summary><p>PayNow or bank transfer at checkout. We ship as soon as payment is confirmed.</p></details>
+      <details><summary>How fast is delivery?</summary><p>1 to 2 working days in Singapore. Free on orders over S$60, otherwise S$4.90.</p></details>
+      <details><summary>How does the S$19 Discovery Kit voucher work?</summary><p>Every kit includes a code for S$19 off your first full-size order of S$38 or more, valid for 60 days.</p></details>
+      <details><summary>What does Calme do with my data?</summary><p>We use your details to deliver orders and, if you subscribe, to send routine tips. With your permission we also use cookies to measure our ads on Instagram, Facebook and TikTok. <button class="link-btn" type="button" data-privacy>Read the privacy notice</button> or <button class="link-btn" type="button" data-cookies>change cookie choices</button>.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot" data-part="footer">
+  <div class="wrap">
+    <div class="foot-notes">
+      <p>1. Calme products are cosmetics. They are not intended to diagnose, treat, cure or prevent eczema or any other disease. Patch test before use and stop if irritation occurs.</p>
+      <p>2. Free delivery applies to orders of S$60 or more delivered within Singapore. Discovery Kit voucher limited to one per customer.</p>
+    </div>
+    <div class="foot-cols">
+      <div><h3>Shop</h3><a href="#c-shop" data-filter-link="cleanse">Cleanse</a><a href="#c-shop" data-filter-link="treat">Treat</a><a href="#c-shop" data-filter-link="moisturise">Moisturise</a><a href="#c-shop" data-filter-link="sets">Sets and kits</a></div>
+      <div><h3>Learn</h3><a href="#c-routine">Routine Finder</a><a href="#c-science">Formulation</a><a href="#c-faq">How to patch test</a></div>
+      <div><h3>Support</h3><a href="#c-faq">Delivery</a><a href="#c-faq">Payment</a><a href="#c-faq">Returns</a><button class="foot-link" type="button" data-privacy>Privacy notice</button><button class="foot-link" type="button" data-cookies>Cookie choices</button></div>
+      <div class="foot-news"><h3>Stay in touch</h3><p>Routine tips and 10% off your first order.</p>
+        <form class="news" id="c-news"><label class="sr" for="c-news-email">Email</label><input id="c-news-email" name="contact[email]" type="email" autocomplete="email" required placeholder="Email address"><button class="pill solid" type="submit">Subscribe</button></form>
+        <p class="news-note">By subscribing you agree to receive emails from Calme. Unsubscribe any time.</p>
+        <div class="socials" id="c-socials" hidden></div>
+      </div>
+    </div>
+    <div class="foot-base"><span>Copyright © 2026 Calme. All rights reserved.</span><span>Singapore</span></div>
+    <p class="mode-note" id="c-mode"></p>
+  </div>
+</footer>
+
+<div class="scrim" id="c-scrim"></div>
+<aside class="drawer" id="c-drawer" aria-label="Bag" aria-hidden="true">
+  <div class="dr-head"><h2>Bag (<span id="c-dr-count">0</span>)</h2><button class="icon-btn" id="c-dr-close" aria-label="Close bag"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="ship"><span id="c-ship-msg">Add S$60 more for free delivery</span><div class="bar"><i id="c-ship-bar" style="width:0%"></i></div></div>
+  <div class="dr-body" id="c-dr-body"></div>
+  <div class="dr-foot">
+    <div class="sub-row"><span>Subtotal</span><span id="c-sub">S$0</span></div>
+    <span class="muted" style="font-size:13px">GST included. Delivery and discount codes at checkout.</span>
+    <button class="pill solid" id="c-checkout">Check Out</button>
+  </div>
+</aside>
+
+<dialog id="c-qv" aria-labelledby="c-qv-title"></dialog>
+<dialog id="c-co" aria-label="Checkout"></dialog>
+<aside class="palette" id="c-palette" aria-label="Colour scheme demo" hidden>
+  <button class="pal-toggle" id="c-pal-toggle" aria-expanded="false" aria-controls="c-pal-opts" title="Try a colour scheme"><i id="c-pal-dot" style="background:linear-gradient(90deg,#7FA3C9 50%,#2F5C8A 50%)"></i><span>Colours</span></button>
+  <div class="pal-opts" id="c-pal-opts" role="group" aria-label="Colour schemes">
+  <button data-pal="slate" aria-pressed="true" title="Slate clinic"><i style="background:linear-gradient(90deg,#7FA3C9 50%,#2F5C8A 50%)"></i><span>Slate</span></button>
+  <button data-pal="sage" aria-pressed="false" title="Sage calm"><i style="background:linear-gradient(90deg,#82AD96 50%,#3E6B5A 50%)"></i><span>Sage</span></button>
+  <button data-pal="oat" aria-pressed="false" title="Oat and clay"><i style="background:linear-gradient(90deg,#C99A72 50%,#8E5338 50%)"></i><span>Oat</span></button>
+  <button data-pal="dusk" aria-pressed="false" title="Dusk lilac"><i style="background:linear-gradient(90deg,#8F94CF 50%,#4F5596 50%)"></i><span>Dusk</span></button>
+  <span class="sep" aria-hidden="true"></span>
+  <button data-pal="luxe" aria-pressed="false" title="Quiet Luxury: white, mist blue, slate, mocha"><i style="background:linear-gradient(90deg,#B7C9DD 50%,#5B6E86 50%)"></i><span>Luxury</span></button>
+  <button data-pal="minimal" aria-pressed="false" title="Modern Minimal: white, soft grey, powder blue, espresso"><i style="background:linear-gradient(90deg,#C1D8E8 50%,#3A2F28 50%)"></i><span>Minimal</span></button>
+  <button data-pal="editorial" aria-pressed="false" title="Soft Editorial: warm white, sand, dusty blue, cocoa"><i style="background:linear-gradient(90deg,#D9C9B6 50%,#6B4F3F 50%)"></i><span>Editorial</span></button>
+  </div>
+</aside>
+<div class="consent" id="c-consent" role="region" aria-label="Cookie choices" hidden>
+  <p>We use cookies to keep your bag and, with your permission, to measure our ads on Instagram, Facebook and TikTok. <button class="link-btn" type="button" data-privacy>Privacy notice</button></p>
+  <div class="consent-btns"><button class="pill sm" type="button" data-consent="necessary">Necessary only</button><button class="pill solid sm" type="button" data-consent="all">Accept all</button></div>
+</div>
+<dialog id="c-privacy" aria-labelledby="c-privacy-h">
+  <div class="privacy"><button type="button" class="x" data-close aria-label="Close">×</button>
+    <h2 id="c-privacy-h">Privacy notice</h2>
+    <p>Calme follows Singapore's Personal Data Protection Act (PDPA). This notice explains what we collect and why.</p>
+    <h3>What we collect</h3>
+    <ul><li><b>Orders:</b> your name, email, phone and address, to deliver and support your order. Payment is handled by Shopify's checkout.</li>
+      <li><b>Newsletter:</b> your email, only if you subscribe. Every email has an unsubscribe link.</li>
+      <li><b>Cookies:</b> necessary cookies keep your bag. With your permission, advertising cookies and pixels from Meta (Instagram, Facebook), TikTok, Google and Pinterest tell us which ads bring visitors, so we can show relevant ads and stop showing them to people who already bought.</li></ul>
+    <h3>Your choices</h3>
+    <p>You can accept or refuse advertising cookies, and change your mind at any time with "Cookie choices" in the footer. To access, correct or delete your data, or to withdraw consent, email our Data Protection Officer at privacy@calme.example.</p>
+    <p class="muted">Demo notice: replace the contact address and review this text with your own legal advice before going live.</p>
+  </div>
+</dialog>
+<aside class="px" id="c-px" aria-label="Pixel event inspector" hidden>
+  <button class="px-toggle" id="c-px-toggle" aria-expanded="false" aria-controls="c-px-log"><b>Pixel events</b> <span id="c-px-count">0</span></button>
+  <div class="px-log" id="c-px-log" hidden>
+    <p class="px-head">What this page sends to ad platforms. <span id="c-px-state"></span></p>
+    <ol id="c-px-list"></ol>
+  </div>
+</aside>
+<div class="toast" id="c-toast" role="status" aria-live="polite"><span id="c-toast-msg"></span><button id="c-toast-view">View bag</button></div>
+</div>
+{% endraw %}
+<script id="calme-data" type="application/json" data-source="liquid">[
+{%- for p in collections.all.products limit: 50 -%}
+  {%- assign d = p.description -%}
+  {%- assign ing = '' -%}{%- assign list_title = 'Key ingredients' -%}
+  {%- if d contains '<h3>Key ingredients</h3><ul>' -%}
+    {%- assign ing = d | split: '<h3>Key ingredients</h3><ul>' | last | split: '</ul>' | first | replace: '</li><li>', '|' | strip_html -%}
+  {%- elsif d contains 'inside</h3><ul>' -%}
+    {%- assign ing = d | split: 'inside</h3><ul>' | last | split: '</ul>' | first | replace: '</li><li>', '|' | strip_html -%}
+    {%- assign list_title = "What's inside" -%}
+  {%- endif -%}
+  {%- assign how = '' -%}
+  {%- if d contains '<h3>How to use</h3><p>' -%}{%- assign how = d | split: '<h3>How to use</h3><p>' | last | split: '</p>' | first | strip_html -%}
+  {%- elsif d contains '<h3>How it works</h3><p>' -%}{%- assign how = d | split: '<h3>How it works</h3><p>' | last | split: '</p>' | first | strip_html -%}{%- endif -%}
+  {%- assign short = d | split: '</p>' | first | strip_html | truncatewords: 12 -%}
+  {"id":{{ p.id }},"handle":{{ p.handle | json }},"title":{{ p.title | json }},"tags":{{ p.tags | json }},"url":{{ p.url | json }},
+   "image":{% if p.featured_image %}{{ p.featured_image | image_url: width: 900 | prepend: 'https:' | json }}{% else %}""{% endif %},
+   "imageSm":{% if p.featured_image %}{{ p.featured_image | image_url: width: 450 | prepend: 'https:' | json }}{% else %}""{% endif %},
+   "short":{{ short | json }},"how":{{ how | json }},"listTitle":{{ list_title | json }},
+   "ingredients":{% if ing != '' %}{{ ing | split: '|' | json }}{% else %}[]{% endif %},
+   "variants":[{%- for v in p.variants -%}{"id":{{ v.id }},"title":{{ v.title | json }},"price":{{ v.price }},"compare":{{ v.compare_at_price | default: 0 }},"available":{{ v.available }},"image":{% if v.image %}{{ v.image | image_url: width: 900 | prepend: 'https:' | json }}{% else %}""{% endif %}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+  {%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]</script>
+<script>window.CALME_CONFIG = { palette: {{ section.settings.palette | json }}, heroImage: {% if section.settings.hero_image %}{{ section.settings.hero_image | image_url: width: 2200 | prepend: 'https:' | json }}{% else %}''{% endif %}, freeShippingCents: {{ section.settings.free_shipping | times: 100 }}, shippingCents: {{ section.settings.shipping_fee | times: 100 }}{% if section.settings.intro_frames_url != blank %}, introFrames: { base: {{ section.settings.intro_frames_url | json }}, count: 160, mobileCount: 80, ext: 'webp' }{% endif %}, pixels: { inspector: {{ section.settings.pixel_inspector | json }} }, socials: { instagram: {{ section.settings.instagram | json }}, tiktok: {{ section.settings.tiktok | json }}, facebook: {{ section.settings.facebook | json }} } };</script>
+<script>{% raw %}(function () {
+  'use strict';
+  var root = document.getElementById('calme');
+  if (!root) return;
+  var $ = function (s, el) { return (el || root).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || root).querySelectorAll(s)); };
+
+  var CFG = Object.assign({
+    shopifyDomain: '',        // e.g. 'calme-skin.myshopify.com'  (Storefront API mode)
+    storefrontToken: '',      // public Storefront API token from the Headless channel
+    apiVersion: '2026-07',
+    freeShippingCents: 6000,
+    shippingCents: 490
+  }, window.CALME_CONFIG || {});
+
+  var FREE = CFG.freeShippingCents;
+  function money(c) { c = Math.round(c); return 'S$' + (c % 100 ? (c / 100).toFixed(2) : String(c / 100)); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]; }); }
+  var store = {
+    get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  /* ---------- catalogue ---------- */
+  var products = [];
+  var byHandle = {};
+  var byVariant = {};
+
+  function categoryOf(p) {
+    var t = p.tags;
+    if (t.indexOf('bundle') > -1 || t.indexOf('trial') > -1) return 'sets';
+    if (t.indexOf('cleanse') > -1) return 'cleanse';
+    if (t.indexOf('treat') > -1) return 'treat';
+    if (t.indexOf('moisturise') > -1) return 'moisturise';
+    return 'other';
+  }
+  function stepOf(p) {
+    return { cleanse: 'Step 1 · Cleanse', treat: 'Step 2 · Treat', moisturise: 'Step 3 · Moisturise' }[p.cat] ||
+      (p.tags.indexOf('trial') > -1 ? 'Try first' : (p.tags.indexOf('bundle') > -1 ? 'Full routine' : ''));
+  }
+  function normalise(list) {
+    products = list.map(function (p) {
+      var tags = (Array.isArray(p.tags) ? p.tags : String(p.tags || '').split(',')).map(function (t) { return String(t).trim().toLowerCase(); }).filter(Boolean);
+      var variants = (p.variants || []).map(function (v) {
+        return { id: String(v.id), title: (v.title === 'Default Title' ? '' : v.title), price: +v.price, compare: +v.compare || 0, available: v.available !== false, image: v.image || '' };
+      });
+      var q = { id: p.id ? String(p.id) : '', handle: p.handle, title: p.title, image: p.image || '', imageSm: p.imageSm || '', short: String(p.short || '').replace(/\.$/, ''), desc: p.desc || '', ingredients: p.ingredients || [], listTitle: p.listTitle || 'Key ingredients', how: p.how || '', tags: tags, variants: variants, url: p.url || '' };
+      q.cat = categoryOf(q); q.step = stepOf(q);
+      return q;
+    }).filter(function (p) { return p.variants.length; });
+    byHandle = {}; byVariant = {};
+    products.forEach(function (p) { byHandle[p.handle] = p; p.variants.forEach(function (v) { byVariant[v.id] = { p: p, v: v }; }); });
+  }
+  function embedded() {
+    var el = document.getElementById('calme-data');
+    if (!el) return [];
+    try { return JSON.parse(el.textContent); } catch (e) { return []; }
+  }
+  function priceLabel(p) {
+    var prices = p.variants.map(function (v) { return v.price; });
+    var lo = Math.min.apply(null, prices), hi = Math.max.apply(null, prices);
+    var cmp = p.variants[0].compare > p.variants[0].price ? ' <s>' + money(p.variants[0].compare) + '</s>' : '';
+    return (lo !== hi ? 'From ' : '') + money(lo) + cmp;
+  }
+
+  /* ---------- cart back-ends ---------- */
+  function emptyCart() { return { lines: [], subtotal: 0, count: 0, checkoutUrl: '' }; }
+
+  var Demo = {
+    name: 'demo',
+    lines: [],
+    load: function () { return Promise.resolve(embedded()); },
+    init: function () { this.lines = (store.get('calme-demo-cart') || []).filter(function (l) { return byVariant[l.id]; }); return this.cart(); },
+    save: function () { store.set('calme-demo-cart', this.lines); },
+    cart: function () {
+      var lines = this.lines.map(function (l) {
+        var hit = byVariant[l.id];
+        return { key: l.id, variantId: l.id, handle: hit.p.handle, title: hit.p.title, variantTitle: hit.v.title, image: hit.v.image || hit.p.image, qty: l.qty, unit: hit.v.price, total: hit.v.price * l.qty };
+      });
+      return Promise.resolve(summarise(lines, ''));
+    },
+    add: function (items) {
+      var self = this;
+      items.forEach(function (it) {
+        var l = self.lines.find(function (x) { return x.id === it.id; });
+        if (l) l.qty += it.qty; else self.lines.push({ id: it.id, qty: it.qty });
+      });
+      this.save(); return this.cart();
+    },
+    update: function (key, qty) {
+      this.lines = this.lines.map(function (l) { return l.id === key ? { id: l.id, qty: qty } : l; }).filter(function (l) { return l.qty > 0; });
+      this.save(); return this.cart();
+    },
+    clear: function () { this.lines = []; this.save(); return this.cart(); },
+    checkout: function () { openCheckout(); }
+  };
+
+  var Theme = {   // running inside a Shopify theme: same-origin AJAX Cart API
+    name: 'shopify-theme',
+    rootUrl: function () { return (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/'; },
+    load: function () { return Promise.resolve(embedded()); },
+    init: function () { return this.cart(); },
+    req: function (path, body) {
+      return fetch(this.rootUrl() + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) } : { headers: { Accept: 'application/json' } })
+        .then(function (r) { if (!r.ok) return r.json().then(function (j) { throw new Error(j.description || j.message || 'Cart error'); }); return r.json(); });
+    },
+    cart: function () {
+      return this.req('cart.js').then(function (c) {
+        var lines = c.items.map(function (i) {
+          return { key: i.key, variantId: String(i.variant_id), handle: i.handle, title: i.product_title, variantTitle: (i.variant_title && i.variant_title !== 'Default Title') ? i.variant_title : '', image: i.image, qty: i.quantity, unit: i.final_price, total: i.final_line_price };
+        });
+        return summarise(lines, '', c.items_subtotal_price != null ? c.items_subtotal_price : c.total_price);
+      });
+    },
+    add: function (items) {
+      var self = this;
+      return this.req('cart/add.js', { items: items.map(function (i) { return { id: +i.id, quantity: i.qty }; }) }).then(function () { return self.cart(); });
+    },
+    update: function (key, qty) { var self = this; return this.req('cart/change.js', { id: key, quantity: qty }).then(function () { return self.cart(); }); },
+    checkout: function () { window.location.href = this.rootUrl() + 'checkout'; }
+  };
+
+  var CART_FIELDS = 'id checkoutUrl totalQuantity cost { subtotalAmount { amount } } lines(first: 50) { nodes { id quantity cost { totalAmount { amount } } merchandise { ... on ProductVariant { id title price { amount } image { url } product { handle title featuredImage { url } } } } } }';
+  var Storefront = {  // hosted anywhere: Shopify Storefront API (public token) + Shopify checkout
+    name: 'shopify-storefront',
+    cartId: null, last: null,
+    gql: function (query, variables) {
+      return fetch('https://' + CFG.shopifyDomain + '/api/' + CFG.apiVersion + '/graphql.json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': CFG.storefrontToken },
+        body: JSON.stringify({ query: query, variables: variables || {} })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j.errors) throw new Error(j.errors[0].message);
+        return j.data;
+      });
+    },
+    load: function () {
+      var cents = function (m) { return m ? Math.round(parseFloat(m.amount) * 100) : 0; };
+      return this.gql('{ products(first: 50) { nodes { handle title tags description onlineStoreUrl featuredImage { url } variants(first: 10) { nodes { id title availableForSale price { amount } compareAtPrice { amount } image { url } } } } } }')
+        .then(function (d) {
+          return d.products.nodes.map(function (p) {
+            return {
+              handle: p.handle, title: p.title, tags: p.tags, image: p.featuredImage ? p.featuredImage.url + (p.featuredImage.url.indexOf('?') > -1 ? '&' : '?') + 'width=900' : '',
+              imageSm: p.featuredImage ? p.featuredImage.url + (p.featuredImage.url.indexOf('?') > -1 ? '&' : '?') + 'width=450' : '',
+              desc: p.description, short: (p.description || '').split('. ')[0], url: p.onlineStoreUrl || '',
+              variants: p.variants.nodes.map(function (v) { return { id: v.id, title: v.title, price: cents(v.price), compare: cents(v.compareAtPrice), available: v.availableForSale, image: v.image ? v.image.url : '' }; })
+            };
+          });
+        });
+    },
+    init: function () { this.cartId = store.get('calme-sf-cart'); return this.cart(); },
+    toCart: function (c) {
+      if (!c) { this.cartId = null; store.set('calme-sf-cart', null); return summarise([], ''); }
+      this.cartId = c.id; store.set('calme-sf-cart', c.id); this.last = c;
+      var lines = c.lines.nodes.map(function (n) {
+        var m = n.merchandise;
+        return { key: n.id, variantId: m.id, handle: m.product.handle, title: m.product.title, variantTitle: m.title === 'Default Title' ? '' : m.title, image: (m.image && m.image.url) || (m.product.featuredImage && m.product.featuredImage.url) || '', qty: n.quantity, unit: Math.round(parseFloat(m.price.amount) * 100), total: Math.round(parseFloat(n.cost.totalAmount.amount) * 100) };
+      });
+      return summarise(lines, c.checkoutUrl, Math.round(parseFloat(c.cost.subtotalAmount.amount) * 100));
+    },
+    cart: function () {
+      var self = this;
+      if (!this.cartId) return Promise.resolve(summarise([], ''));
+      return this.gql('query($id: ID!) { cart(id: $id) { ' + CART_FIELDS + ' } }', { id: this.cartId }).then(function (d) { return self.toCart(d.cart); });
+    },
+    add: function (items) {
+      var self = this;
+      var lines = items.map(function (i) { return { merchandiseId: i.id, quantity: i.qty }; });
+      if (!this.cartId) {
+        var input = { lines: lines };
+        var attrs = Object.keys(camp).map(function (k) { return { key: k, value: String(camp[k]) }; });
+        if (attrs.length) input.attributes = attrs;
+        if (linkCode) input.discountCodes = [linkCode];
+        return this.gql('mutation($input: CartInput!) { cartCreate(input: $input) { cart { ' + CART_FIELDS + ' } userErrors { message } } }', { input: input })
+          .then(function (d) { if (d.cartCreate.userErrors.length) throw new Error(d.cartCreate.userErrors[0].message); return self.toCart(d.cartCreate.cart); });
+      }
+      return this.gql('mutation($id: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $id, lines: $lines) { cart { ' + CART_FIELDS + ' } userErrors { message } } }', { id: this.cartId, lines: lines })
+        .then(function (d) { if (d.cartLinesAdd.userErrors.length) throw new Error(d.cartLinesAdd.userErrors[0].message); return self.toCart(d.cartLinesAdd.cart); });
+    },
+    update: function (key, qty) {
+      var self = this;
+      if (qty <= 0) {
+        return this.gql('mutation($id: ID!, $ids: [ID!]!) { cartLinesRemove(cartId: $id, lineIds: $ids) { cart { ' + CART_FIELDS + ' } userErrors { message } } }', { id: this.cartId, ids: [key] })
+          .then(function (d) { return self.toCart(d.cartLinesRemove.cart); });
+      }
+      return this.gql('mutation($id: ID!, $lines: [CartLineUpdateInput!]!) { cartLinesUpdate(cartId: $id, lines: $lines) { cart { ' + CART_FIELDS + ' } userErrors { message } } }', { id: this.cartId, lines: [{ id: key, quantity: qty }] })
+        .then(function (d) { return self.toCart(d.cartLinesUpdate.cart); });
+    },
+    checkout: function () { if (this.last && this.last.checkoutUrl) window.location.href = this.last.checkoutUrl; }
+  };
+
+  function summarise(lines, checkoutUrl, subtotal) {
+    var sub = subtotal != null ? subtotal : lines.reduce(function (s, l) { return s + l.total; }, 0);
+    return { lines: lines, subtotal: sub, count: lines.reduce(function (s, l) { return s + l.qty; }, 0), checkoutUrl: checkoutUrl || '' };
+  }
+
+  /* ---------- colour schemes ---------- */
+  var PALETTES = ['slate', 'sage', 'oat', 'dusk', 'luxe', 'minimal', 'editorial'];
+  function setPalette(name) {
+    if (PALETTES.indexOf(name) < 0) name = 'slate';
+    root.setAttribute('data-palette', name);
+    $$('#c-palette [data-pal]').forEach(function (b) {
+      var on = b.getAttribute('data-pal') === name;
+      b.setAttribute('aria-pressed', String(on));
+      if (on && $('#c-pal-dot')) $('#c-pal-dot').setAttribute('style', b.querySelector('i').getAttribute('style'));
+    });
+    root.dispatchEvent(new CustomEvent('calme:palette', { detail: name }));
+  }
+  setPalette(CFG.paletteSwitcher ? (store.get('calme-palette') || CFG.palette) : CFG.palette);
+  if (CFG.paletteSwitcher) $('#c-palette').hidden = false;
+
+  var dataEl = document.getElementById('calme-data');
+  var inTheme = !!(window.Shopify && dataEl && dataEl.getAttribute('data-source') === 'liquid');
+  var backend = inTheme ? Theme : (CFG.shopifyDomain && CFG.storefrontToken ? Storefront : Demo);
+  var cart = emptyCart();
+
+  /* ---------- social marketing: consent, ad pixels, campaign attribution ----------
+     One event vocabulary for the whole site. Every event goes to the data layer (for Google Tag Manager).
+     Inside a Shopify theme it is also published as a Shopify customer event ("calme:add_to_cart", ...), where
+     the Facebook & Instagram and TikTok apps or a custom pixel pick it up; Shopify's own banner handles consent.
+     Elsewhere the page loads Meta, TikTok, GA4 and Pinterest pixels itself, only after the visitor accepts. */
+  var params = (function () { try { return new URLSearchParams(window.location.search); } catch (e) { return { get: function () { return null; } }; } })();
+  var sess = {
+    get: function (k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch (e) { return null; } },
+    set: function (k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var PX = Object.assign({ meta: '', tiktok: '', ga4: '', pinterest: '', demo: false, inspector: false }, CFG.pixels || {});
+  var hasIds = !!(PX.meta || PX.tiktok || PX.ga4 || PX.pinterest);
+  // pixels are invisible to shoppers; the event panel only opens when asked for (?pixeldebug=1), e.g. in a class demo
+  var showInspector = !!PX.inspector || params.get('pixeldebug') === '1';
+  // demo: behave as a store with pixels installed (cookie consent, events logged) without sending anything
+  var askConsent = !inTheme && (hasIds || !!PX.demo);
+  var consent = store.get('calme-consent');            // 'all' | 'necessary' | null
+  var pixelsLoaded = false, pending = [], pxLog = [];
+
+  // campaign attribution: the first landing of this visit (UTM tags and ad-click ids)
+  var camp = sess.get('calme-camp');
+  if (!camp) {
+    camp = {};
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ttclid', 'gclid'].forEach(function (k) {
+      var v = params.get(k); if (v) camp[k] = String(v).slice(0, 120);
+    });
+    if (Object.keys(camp).length) { camp.landing_page = window.location.pathname; sess.set('calme-camp', camp); }
+  }
+  var hasCamp = Object.keys(camp).length > 0;
+  // discount links, e.g. ?discount=CALMEIG on Instagram ads (the same parameter Shopify uses)
+  var linkCode = String(params.get('discount') || params.get('code') || sess.get('calme-code') || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 40);
+  if (linkCode) sess.set('calme-code', linkCode);
+
+  var PXMAP = {
+    page_view: { meta: 'PageView', tiktok: 'page view', ga4: 'page_view', pin: 'page' },
+    view_item: { meta: 'ViewContent', tiktok: 'ViewContent', ga4: 'view_item', pin: 'pagevisit' },
+    add_to_cart: { meta: 'AddToCart', tiktok: 'AddToCart', ga4: 'add_to_cart', pin: 'addtocart' },
+    begin_checkout: { meta: 'InitiateCheckout', tiktok: 'InitiateCheckout', ga4: 'begin_checkout' },
+    search: { meta: 'Search', tiktok: 'Search', ga4: 'search', pin: 'search' },
+    lead: { meta: 'Lead', tiktok: 'SubmitForm', ga4: 'generate_lead', pin: 'lead' },
+    share: { metaCustom: 'Share', tiktok: 'Share', ga4: 'share' },
+    routine_result: { metaCustom: 'RoutineResult', tiktok: 'RoutineResult', ga4: 'routine_result' },
+    intro_complete: { metaCustom: 'IntroComplete', tiktok: 'IntroComplete', ga4: 'intro_complete' }
+  };
+  var PXLABEL = { page_view: 'Page view', view_item: 'Viewed a product', add_to_cart: 'Added to bag', begin_checkout: 'Started checkout',
+    search: 'Searched', lead: 'Newsletter sign-up', share: 'Shared a product', routine_result: 'Routine Finder result',
+    intro_complete: 'Watched the whole intro', intro_skip: 'Skipped the intro', purchase_demo: 'Placed an order (demo)' };
+
+  function itemOf(p, v, qty) {
+    return { id: String(v.id).split('/').pop(), product_id: p.id || '', handle: p.handle, name: p.title, variant: v.title || '', price: v.price / 100, quantity: qty || 1 };
+  }
+  function ecom(items) {
+    var value = items.reduce(function (s, i) { return s + i.price * i.quantity; }, 0);
+    return { currency: 'SGD', value: Math.round(value * 100) / 100, items: items };
+  }
+  function cartItems() {
+    return cart.lines.map(function (l) { var hit = byVariant[l.variantId]; return hit ? itemOf(hit.p, hit.v, l.qty) : null; }).filter(Boolean);
+  }
+
+  function inject(src) { var t = document.createElement('script'); t.async = true; t.src = src; document.head.appendChild(t); }
+  function loadPixels() {
+    if (pixelsLoaded || !hasIds) return;
+    pixelsLoaded = true;
+    try {
+      if (PX.meta) {
+        var f = window, n = f.fbq = f.fbq || function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = true; n.version = '2.0'; n.queue = n.queue || [];
+        inject('https://connect.facebook.net/en_US/fbevents.js');
+        window.fbq('init', PX.meta); window.fbq('track', 'PageView');
+      }
+      if (PX.tiktok) {
+        var ttq = window.ttq = window.ttq || [];
+        ttq.methods = ['page', 'track', 'identify', 'instances', 'debug', 'on', 'off', 'once', 'ready', 'alias', 'group', 'enableCookie', 'disableCookie', 'holdConsent', 'revokeConsent', 'grantConsent'];
+        ttq.setAndDefer = function (t, e) { t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }; };
+        for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+        ttq._i = ttq._i || {}; ttq._i[PX.tiktok] = []; ttq._t = ttq._t || {}; ttq._t[PX.tiktok] = +new Date(); ttq._o = ttq._o || {}; ttq._o[PX.tiktok] = {};
+        inject('https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=' + encodeURIComponent(PX.tiktok) + '&lib=ttq');
+        ttq.page();
+      }
+      if (PX.ga4) {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        inject('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(PX.ga4));
+        window.gtag('js', new Date()); window.gtag('config', PX.ga4);
+      }
+      if (PX.pinterest) {
+        if (!window.pintrk) { window.pintrk = function () { window.pintrk.queue.push(Array.prototype.slice.call(arguments)); }; window.pintrk.queue = []; window.pintrk.version = '3.0'; }
+        inject('https://s.pinimg.com/ct/core.js');
+        window.pintrk('load', PX.pinterest); window.pintrk('page');
+      }
+    } catch (e) { /* measurement must never break shopping */ }
+  }
+  function sendPixels(name, d) {
+    var m = PXMAP[name];
+    if (!m || name === 'page_view') return;
+    var ids = (d.items || []).map(function (i) { return i.id; });
+    try {
+      if (PX.meta && window.fbq) {
+        var md = d.items ? { content_ids: ids, content_type: 'product', contents: d.items.map(function (i) { return { id: i.id, quantity: i.quantity }; }), value: d.value, currency: d.currency } : {};
+        if (name === 'search') md = { search_string: d.search_term };
+        if (name === 'routine_result') md.concern = d.concern;
+        if (m.meta) window.fbq('track', m.meta, md); else window.fbq('trackCustom', m.metaCustom, md);
+      }
+      if (PX.tiktok && window.ttq) {
+        var td = d.items ? { contents: d.items.map(function (i) { return { content_id: i.id, content_type: 'product', content_name: i.name, quantity: i.quantity, price: i.price }; }), value: d.value, currency: d.currency } : {};
+        if (name === 'search') td = { query: d.search_term };
+        window.ttq.track(m.tiktok, td);
+      }
+      if (PX.ga4 && window.gtag) {
+        var gd = d.items ? { currency: d.currency, value: d.value, items: d.items.map(function (i) { return { item_id: i.id, item_name: i.name, item_variant: i.variant, price: i.price, quantity: i.quantity }; }) } : {};
+        if (name === 'search') gd = { search_term: d.search_term };
+        if (name === 'lead') gd = { method: d.method };
+        if (name === 'routine_result') gd.concern = d.concern;
+        window.gtag('event', m.ga4, gd);
+      }
+      if (PX.pinterest && window.pintrk && m.pin) {
+        window.pintrk('track', m.pin, d.items ? { value: d.value, currency: d.currency, line_items: d.items.map(function (i) { return { product_id: i.id, product_name: i.name, product_price: i.price, product_quantity: i.quantity }; }) } : (name === 'search' ? { search_query: d.search_term } : {}));
+      }
+    } catch (e) { /* ignore */ }
+  }
+  function emit(name, d) {
+    d = d || {};
+    var payload = Object.assign({}, d, hasCamp ? { campaign: camp } : {});
+    try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: 'calme_' + name }, payload)); } catch (e) {}
+    var status;
+    if (inTheme) {
+      try {
+        if (window.Shopify && window.Shopify.analytics && window.Shopify.analytics.publish) { window.Shopify.analytics.publish('calme:' + name, payload); status = 'Published to Shopify customer events'; }
+        else status = 'Shopify analytics not available on this page';
+      } catch (e) { status = 'Could not publish'; }
+    } else if (name === 'purchase_demo') {
+      status = 'Demo order, not sent to ad platforms';
+    } else if (!askConsent) {
+      status = 'No pixels set up';
+    } else if (consent === 'all') {
+      if (hasIds) { loadPixels(); sendPixels(name, d); status = 'Sent'; } else status = 'Consent given (demo: no pixel IDs yet)';
+    } else if (consent === 'necessary') {
+      status = 'Not sent: visitor chose necessary cookies only';
+    } else { pending.push([name, d]); status = 'Waiting for cookie consent'; }
+    pxLog.unshift({ name: name, d: d, status: status });
+    if (pxLog.length > 40) pxLog.pop();
+    renderPx();
+  }
+  function renderPx() {
+    if (!showInspector) return;
+    $('#c-px-count').textContent = pxLog.length;
+    $('#c-px-state').textContent = inTheme ? 'Shopify theme: consent and base pixels are handled by Shopify.' :
+      (consent === 'all' ? 'Cookies: accepted.' : consent === 'necessary' ? 'Cookies: necessary only.' : 'Cookies: not answered yet.');
+    $('#c-px-list').innerHTML = pxLog.map(function (e) {
+      var m = PXMAP[e.name] || {};
+      var names = [(m.meta || m.metaCustom) ? 'Meta ' + (m.meta || m.metaCustom + ' (custom)') : '', m.tiktok ? 'TikTok ' + m.tiktok : '', m.ga4 ? 'GA4 ' + m.ga4 : ''].filter(Boolean).join(' · ');
+      var what = (e.d.items || []).map(function (i) { return i.name + (i.quantity > 1 ? ' ×' + i.quantity : ''); }).join(', ');
+      var extra = e.d.value != null ? money(Math.round(e.d.value * 100)) : (e.d.search_term ? '“' + e.d.search_term + '”' : (e.d.concern || e.d.method || ''));
+      return '<li><b>' + esc(PXLABEL[e.name] || e.name) + '</b><span class="px-st">' + esc(e.status) + '</span>' +
+        (names ? '<small>' + esc(names) + '</small>' : '<small>Data layer only</small>') +
+        ((what || extra) ? '<small>' + esc([what, extra].filter(Boolean).join(' · ')) + '</small>' : '') + '</li>';
+    }).join('');
+  }
+  function setConsent(v) {
+    consent = v; store.set('calme-consent', v);
+    $('#c-consent').hidden = true;
+    if (v === 'all') {
+      if (hasIds) loadPixels();
+      var q = pending; pending = [];
+      q.forEach(function (x) { if (hasIds) sendPixels(x[0], x[1]); });
+      pxLog.forEach(function (e) { if (e.status === 'Waiting for cookie consent') e.status = hasIds ? 'Sent after consent' : 'Consent given (demo: no pixel IDs yet)'; });
+    } else {
+      pending = [];
+      try { if (window.fbq) window.fbq('consent', 'revoke'); if (window.ttq && window.ttq.revokeConsent) window.ttq.revokeConsent(); } catch (e) {}
+      pxLog.forEach(function (e) { if (e.status === 'Waiting for cookie consent') e.status = 'Not sent: visitor chose necessary cookies only'; });
+    }
+    renderPx();
+  }
+
+  /* ---------- rendering ---------- */
+  var filter = 'all', query = '';
+
+  function badgeOf(p) {
+    var v = p.variants[0];
+    if (v.compare > v.price) return 'Save ' + money(v.compare - v.price);
+    if (p.tags.indexOf('bestseller') > -1) return 'Best seller';
+    if (p.tags.indexOf('trial') > -1) return 'Try first';
+    return '';
+  }
+  function card(p) {
+    var multi = p.variants.length > 1;
+    var sizes = p.variants.map(function (v) { return v.title; }).filter(Boolean).join(' · ');
+    var avail = p.variants[0].available;
+    return '<article class="card">' +
+      '<button class="card-img" data-open="' + esc(p.handle) + '" aria-label="View ' + esc(p.title) + '">' +
+        (p.image ? '<img src="' + esc(p.image) + '"' + (p.imageSm ? ' srcset="' + esc(p.imageSm) + ' 450w, ' + esc(p.image) + ' 900w" sizes="(max-width: 640px) 46vw, 360px"' : '') + ' alt="' + esc(p.title) + '" loading="lazy" decoding="async" width="800" height="800">' : '') + '</button>' +
+      '<div class="card-body">' +
+        '<span class="badge">' + esc(badgeOf(p)) + '</span>' +
+        '<h3>' + esc(p.title) + '</h3>' +
+        (p.short ? '<p class="benefit">' + esc(p.short) + '</p>' : '') +
+        '<p class="meta">' + esc([p.step, sizes].filter(Boolean).join(' · ')) + '</p>' +
+        '<div class="card-foot"><span class="price">' + priceLabel(p) + '</span>' +
+          '<button class="pill solid sm" ' + (multi ? 'data-open' : 'data-add') + '="' + esc(p.handle) + '"' + (avail ? '' : ' disabled') + '>' +
+          (avail ? (multi ? 'Choose size' : 'Add to Bag') : 'Sold out') + '</button></div>' +
+      '</div>' +
+    '</article>';
+  }
+
+  var CONCERNS = { flare: ['flare-up-care', 'soothing', 'barrier-repair', 'redness'], dry: ['barrier-repair', 'dry-skin', 'moisturise', 'oil-cleanser', 'cream-cleanser'], texture: ['advanced', 'texture', 'exfoliant'] };
+  var concern = 'any';
+
+  function renderGrid() {
+    var q = query.trim().toLowerCase();
+    var list = products.filter(function (p) {
+      if (filter !== 'all' && p.cat !== filter) return false;
+      if (concern !== 'any' && !CONCERNS[concern].some(function (t) { return p.tags.indexOf(t) > -1; })) return false;
+      if (!q) return true;
+      return (p.title + ' ' + p.tags.join(' ') + ' ' + p.short + ' ' + p.desc).toLowerCase().indexOf(q) > -1;
+    });
+    $('#c-grid').innerHTML = list.length ? list.map(card).join('') :
+      '<p class="empty">No products match these filters. Try “All” or another skin concern.</p>';
+  }
+
+  function fillImages() {
+    $$('img[data-img]').forEach(function (img) {
+      var key = img.getAttribute('data-img');
+      var src = key === 'hero' ? (CFG.heroImage || (byHandle['barrier-reset-routine'] || {}).image) : (byHandle[key] || {}).image;
+      if (src) img.src = src;
+    });
+    var kit = byHandle['discovery-kit'], kp = $('#c-kit-price');
+    if (kit && kp) kp.textContent = money(kit.variants[0].price);
+  }
+
+  /* ---------- routine builder ---------- */
+  var ROUTINES = {
+    flare: {
+      note: 'Keep it to three gentle products while skin is reactive. Skip the oil cleanser, acids and retinol until it settles.',
+      am: [['gentle-cream-cleanser', 'Lukewarm water, 30 seconds, pat dry'], ['centella-calming-serum', 'Press into damp skin'], ['barrier-repair-cream', 'Within 3 minutes, then sunscreen']],
+      pm: [['gentle-cream-cleanser', 'Lukewarm water, pat dry'], ['centella-calming-serum', 'Keep it in the fridge for extra cooling'], ['barrier-repair-cream', 'A thicker layer on dry patches']],
+      buy: ['gentle-cream-cleanser', 'centella-calming-serum', 'barrier-repair-cream']
+    },
+    dry: {
+      note: 'Rebuild the lipids your barrier is missing, then seal them in. The four-step set covers all of this and saves S$16.',
+      am: [['gentle-cream-cleanser', 'Lukewarm water, pat dry'], ['ceramide-recovery-serum', '3 to 4 drops on damp skin'], ['barrier-repair-cream', 'Then sunscreen']],
+      pm: [['barrier-cleansing-oil', 'On dry skin, massage 60 seconds'], ['gentle-cream-cleanser', 'Second cleanse'], ['ceramide-recovery-serum', 'On damp skin'], ['barrier-repair-cream', 'Within 3 minutes']],
+      buy: ['barrier-reset-routine']
+    },
+    texture: {
+      note: 'Your barrier routine stays the same. Add one active on two evenings a week each, never on the same night, and stop if skin flares.',
+      am: [['gentle-cream-cleanser', 'Lukewarm water, pat dry'], ['ceramide-recovery-serum', 'On damp skin'], ['barrier-repair-cream', 'Then SPF, every day']],
+      pm: [['gentle-cream-cleanser', 'Cleanse'], ['pha-gentle-exfoliant', 'Mon and Thu only'], ['night-renew-retinol', 'Tue and Fri only'], ['barrier-repair-cream', 'Every night']],
+      buy: ['gentle-cream-cleanser', 'ceramide-recovery-serum', 'barrier-repair-cream', 'pha-gentle-exfoliant', 'night-renew-retinol']
+    },
+    'new': {
+      note: 'Use the five minis morning and evening for 14 days. Your parcel includes S$19 off your first full-size order.',
+      am: [['gentle-cream-cleanser', 'Mini, 30 ml'], ['ceramide-recovery-serum', 'Mini, 5 ml'], ['barrier-repair-cream', 'Mini, 15 ml']],
+      pm: [['barrier-cleansing-oil', 'Mini, 20 ml'], ['centella-calming-serum', 'Mini, 5 ml'], ['barrier-repair-cream', 'Mini, 15 ml']],
+      buy: ['discovery-kit']
+    }
+  };
+
+  function renderRoutine() {
+    var key = ($('input[name="c-skin"]:checked') || {}).value || 'dry';
+    var r = ROUTINES[key];
+    var name = function (h) { return byHandle[h] ? byHandle[h].title : h; };
+    var col = function (title, steps) {
+      return '<div class="rb-col"><h3>' + title + '</h3><ol>' + steps.filter(function (s) { return byHandle[s[0]]; }).map(function (s) {
+        return '<li><span>' + esc(name(s[0])) + '<small>' + esc(s[1]) + '</small></span></li>';
+      }).join('') + '</ol></div>';
+    };
+    var buy = r.buy.map(function (h) { return byHandle[h]; }).filter(Boolean);
+    var total = buy.reduce(function (s, p) { return s + p.variants[0].price; }, 0);
+    $('#c-rb-out').innerHTML =
+      '<p class="rb-note">' + esc(r.note) + '</p>' +
+      '<div class="rb-cols">' + col('Morning', r.am) + col('Evening', r.pm) + '</div>' +
+      '<div class="rb-picks">' + buy.map(function (p) {
+        return '<button class="rb-pick" data-open="' + esc(p.handle) + '">' + (p.image ? '<img src="' + esc(p.image) + '" alt="">' : '') +
+          '<span><b>' + esc(p.title) + '</b><br>' + money(p.variants[0].price) + (p.variants.length > 1 ? ' · ' + esc(p.variants[0].title) : '') + '</span></button>';
+      }).join('') + '</div>' +
+      '<div class="rb-foot"><span class="rb-total">' + money(total) + '<span class="muted" style="font-size:14px;font-weight:400"> for ' + buy.length + (buy.length === 1 ? ' item' : ' items') + '</span></span>' +
+      '<button class="pill solid" id="c-rb-add" data-handles="' + esc(r.buy.join(',')) + '">Add Routine to Bag</button></div>';
+  }
+
+  /* ---------- quick view ---------- */
+  var qvState = { p: null, v: 0, qty: 1 };
+  function openQV(handle) {
+    var p = byHandle[handle]; if (!p) return;
+    qvState = { p: p, v: 0, qty: 1 };
+    renderQV();
+    emit('view_item', ecom([itemOf(p, p.variants[0], 1)]));
+    var d = $('#c-qv');
+    if (!d.open) { try { d.showModal(); } catch (e) { d.setAttribute('open', ''); } }
+  }
+  function renderQV() {
+    var p = qvState.p, v = p.variants[qvState.v];
+    var img = v.image || p.image;
+    var full = inTheme ? ((window.Shopify.routes && window.Shopify.routes.root) || '/') + 'products/' + p.handle : p.url;
+    $('#c-qv').innerHTML =
+      '<div class="qv"><div class="qv-img">' + (img ? '<img src="' + esc(img) + '" alt="' + esc(p.title) + '">' : '') + '</div>' +
+      '<div class="qv-info"><button class="x" data-close aria-label="Close">×</button>' +
+        (p.step ? '<span class="chip" style="align-self:flex-start">' + esc(p.step) + '</span>' : '') +
+        '<h2 id="c-qv-title">' + esc(p.title) + '</h2>' +
+        '<span class="price">' + money(v.price) + (v.compare > v.price ? ' <s>' + money(v.compare) + '</s>' : '') + ' <span class="muted" style="font-size:13px;font-weight:400">GST incl.</span></span>' +
+        (p.short ? '<p>' + esc(p.short) + '</p>' : '') +
+        (p.variants.length > 1 ? '<div class="opts" role="group" aria-label="Size">' + p.variants.map(function (x, i) {
+          return '<button data-variant="' + i + '" aria-pressed="' + (i === qvState.v) + '">' + esc(x.title) + ' · ' + money(x.price) + '</button>';
+        }).join('') + '</div>' : '') +
+        '<div class="buy-row"><div class="qty" aria-label="Quantity"><button data-qvq="-1" aria-label="Decrease quantity">−</button><span>' + qvState.qty + '</span><button data-qvq="1" aria-label="Increase quantity">+</button></div>' +
+        '<button class="pill solid" id="c-qv-add"' + (v.available ? '' : ' disabled') + '>' + (v.available ? 'Add to Bag · ' + money(v.price * qvState.qty) : 'Sold out') + '</button></div>' +
+        '<div class="qv-detail">' +
+          (p.ingredients.length ? '<h3>' + esc(p.listTitle) + '</h3><ul>' + p.ingredients.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>' : '') +
+          (p.how ? '<h3>How to use</h3><p>' + esc(p.how) + '</p>' : '') +
+          (!p.ingredients.length && p.desc ? '<p>' + esc(p.desc) + '</p>' : '') +
+          '<h3>Patch test</h3><p>Try a small amount behind the ear for 48 hours first. Not for broken or weeping skin.</p>' +
+        '</div>' +
+        '<div class="qv-links">' + (full ? '<a href="' + esc(full) + '">View full product page</a>' : '') +
+          '<button class="link-btn" type="button" id="c-qv-share">Share this product</button></div>' +
+      '</div></div>';
+  }
+
+  /* ---------- cart drawer ---------- */
+  function renderCart() {
+    $('#c-count').textContent = cart.count;
+    $('#c-cart-btn').setAttribute('aria-label', 'Open bag, ' + cart.count + (cart.count === 1 ? ' item' : ' items'));
+    $('#c-dr-count').textContent = cart.count;
+    $('#c-sub').textContent = money(cart.subtotal);
+    var left = FREE - cart.subtotal;
+    $('#c-ship-msg').innerHTML = left > 0 ? 'Add <b>' + money(left) + '</b> more for free delivery' : '<b>Free delivery unlocked</b>';
+    $('#c-ship-bar').style.width = Math.min(100, Math.round(cart.subtotal / FREE * 100)) + '%';
+    $('#c-checkout').disabled = !cart.count;
+    if (!cart.lines.length) {
+      $('#c-dr-body').innerHTML = '<div class="dr-empty"><p>Your bag is empty.</p><button class="pill" data-close-drawer data-goto="c-routine">Find your routine</button></div>';
+      return;
+    }
+    var have = cart.lines.map(function (l) { return l.handle; });
+    var next = ['barrier-repair-cream', 'ceramide-recovery-serum', 'gentle-cream-cleanser', 'barrier-cleansing-oil'].filter(function (h) { return byHandle[h] && have.indexOf(h) < 0 && have.indexOf('barrier-reset-routine') < 0; })[0];
+    $('#c-dr-body').innerHTML = cart.lines.map(function (l) {
+      return '<div class="line">' + (l.image ? '<img src="' + esc(l.image) + '" alt="">' : '<span></span>') +
+        '<div><div class="line-top"><b>' + esc(l.title) + '</b><span class="price">' + money(l.total) + '</span></div>' +
+        (l.variantTitle ? '<span class="muted" style="font-size:13px">' + esc(l.variantTitle) + '</span>' : '') +
+        '<div><span class="qty"><button data-line="' + esc(l.key) + '" data-to="' + (l.qty - 1) + '" aria-label="Decrease ' + esc(l.title) + '">−</button><span>' + l.qty + '</span><button data-line="' + esc(l.key) + '" data-to="' + (l.qty + 1) + '" aria-label="Increase ' + esc(l.title) + '">+</button></span>' +
+        '<button class="rm" data-line="' + esc(l.key) + '" data-to="0">Remove</button></div></div></div>';
+    }).join('') + (next ? (function () {
+      var p = byHandle[next];
+      return '<div class="upsell">' + (p.image ? '<img src="' + esc(p.image) + '" alt="">' : '<span></span>') + '<div><small>Complete your routine</small>' + esc(p.title) + ' · ' + money(p.variants[0].price) + '</div><button class="pill lime sm" data-add="' + esc(p.handle) + '">Add</button></div>';
+    })() : '');
+  }
+
+  var scrim = $('#c-scrim'), drawer = $('#c-drawer');
+  function openDrawer() { scrim.classList.add('on'); drawer.classList.add('on'); drawer.removeAttribute('inert'); drawer.setAttribute('aria-hidden', 'false'); setTimeout(function () { $('#c-dr-close').focus(); }, 50); }
+  function closeDrawer() { scrim.classList.remove('on'); drawer.classList.remove('on'); drawer.setAttribute('inert', ''); drawer.setAttribute('aria-hidden', 'true'); }
+  drawer.setAttribute('inert', '');
+
+  var toastTimer;
+  function toast(msg, withView) {
+    $('#c-toast-msg').textContent = msg;
+    $('#c-toast-view').hidden = !withView;
+    $('#c-toast').classList.add('on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { $('#c-toast').classList.remove('on'); }, 3200);
+  }
+
+  var busy = false;
+  function run(promise, okMsg, open, added) {
+    busy = true;
+    return promise.then(function (c) {
+      cart = c; renderCart(); if (okMsg) toast(okMsg, !open); if (open) openDrawer();
+      if (added && added.length) { emit('add_to_cart', ecom(added)); tagCart(); }
+    })
+      .catch(function (e) { toast('Could not update your bag: ' + (e.message || 'try again')); })
+      .then(function () { busy = false; });
+  }
+  function addHandles(handles, msg) {
+    var ps = handles.map(function (h) { return byHandle[h]; }).filter(Boolean);
+    var items = ps.map(function (p) { return { id: p.variants[0].id, qty: 1 }; });
+    if (!items.length) return;
+    return run(backend.add(items), msg || 'Added to bag', false, ps.map(function (p) { return itemOf(p, p.variants[0], 1); }));
+  }
+
+  /* ---------- demo checkout ---------- */
+  var CODES = { WELCOME10: 'pct', CALMEIG: 'pct', CALMEFB: 'pct', CALMETT: 'pct', CALMEGOOGLE: 'pct', KIT19BACK: 'kit' };
+  var co = { code: '', ship: 'std', pay: 'paynow' };
+  function discountFor(code) {
+    if (!code) return 0;
+    if (CODES[code] === 'pct') return Math.round(cart.subtotal * 0.10);
+    if (CODES[code] === 'kit') {
+      var eligible = cart.lines.filter(function (l) { return l.handle !== 'discovery-kit'; }).reduce(function (s, l) { return s + l.total; }, 0);
+      return eligible >= 3800 ? 1900 : -1;
+    }
+    return -2;
+  }
+  function openCheckout() {
+    if (!cart.count) return;
+    co.code = (linkCode && discountFor(linkCode) > 0) ? linkCode : ''; renderCheckout(); closeDrawer();
+    var d = $('#c-co'); try { d.showModal(); } catch (e) { d.setAttribute('open', ''); }
+  }
+  function totals() {
+    var disc = Math.max(0, discountFor(co.code));
+    var after = cart.subtotal - disc;
+    var ship = cart.subtotal >= FREE ? 0 : CFG.shippingCents;
+    return { disc: disc, ship: ship, total: after + ship };
+  }
+  function renderCheckout() {
+    var t = totals();
+    $('#c-co').innerHTML = '<form class="co" id="c-co-form" novalidate><button type="button" class="x" data-close aria-label="Close checkout">×</button>' +
+      '<h2>Checkout</h2>' +
+      '<p class="demo-flag">Demo checkout. On the live store this step is Shopify\'s own secure checkout, with the same PayNow and bank-transfer options.</p>' +
+      '<div class="co-grid"><div style="display:grid;gap:22px">' +
+        '<div class="fields">' +
+          '<div class="field full"><label for="c-co-email">Email</label><input id="c-co-email" type="email" required autocomplete="email" value="demo@calme.sg"></div>' +
+          '<div class="field"><label for="c-co-first">First name</label><input id="c-co-first" required autocomplete="given-name" value="Nur"></div>' +
+          '<div class="field"><label for="c-co-last">Last name</label><input id="c-co-last" required autocomplete="family-name" value="Tan"></div>' +
+          '<div class="field full"><label for="c-co-addr">Address</label><input id="c-co-addr" required autocomplete="street-address" value="10 Bedok North Ave 4, #08-12"></div>' +
+          '<div class="field"><label for="c-co-postal">Postal code</label><input id="c-co-postal" required inputmode="numeric" pattern="[0-9]{6}" autocomplete="postal-code" value="460010"></div>' +
+          '<div class="field"><label for="c-co-phone">Mobile</label><input id="c-co-phone" required inputmode="tel" autocomplete="tel" value="+65 9123 4567"></div>' +
+        '</div>' +
+        '<fieldset><legend>Delivery</legend><label class="radio"><input type="radio" name="c-ship" checked><span><b>' + (t.ship ? 'Standard · ' + money(t.ship) : 'Standard · Free') + '</b><small>1 to 2 working days in Singapore' + (t.ship ? ' · free over ' + money(FREE) : '') + '</small></span></label></fieldset>' +
+        '<fieldset><legend>Payment</legend>' +
+          '<label class="radio"><input type="radio" name="c-pay" value="paynow"' + (co.pay === 'paynow' ? ' checked' : '') + '><span><b>PayNow</b><small>Scan the QR in your confirmation email</small></span></label>' +
+          '<label class="radio"><input type="radio" name="c-pay" value="bank"' + (co.pay === 'bank' ? ' checked' : '') + '><span><b>Bank transfer</b><small>We ship once payment is confirmed</small></span></label>' +
+        '</fieldset>' +
+      '</div>' +
+      '<div class="summary">' +
+        cart.lines.map(function (l) { return '<div class="row"><span>' + l.qty + ' × ' + esc(l.title) + (l.variantTitle ? ' (' + esc(l.variantTitle) + ')' : '') + '</span><span>' + money(l.total) + '</span></div>'; }).join('') +
+        '<div class="code-row"><label class="sr" for="c-co-code">Discount code</label><input id="c-co-code" placeholder="Discount code" value="' + esc(co.code) + '"><button type="button" class="pill sm" id="c-co-apply">Apply</button></div>' +
+        '<p class="msg' + (co.code ? ' ok' : '') + '" id="c-co-msg">' + (co.code && co.code === linkCode ? esc(co.code) + ' applied from your link' : '') + '</p>' +
+        '<div class="row"><span>Subtotal</span><span>' + money(cart.subtotal) + '</span></div>' +
+        (t.disc ? '<div class="row"><span>Discount ' + esc(co.code) + '</span><span>−' + money(t.disc) + '</span></div>' : '') +
+        '<div class="row"><span>Delivery</span><span>' + (t.ship ? money(t.ship) : 'Free') + '</span></div>' +
+        '<div class="row tot"><span>Total (GST incl.)</span><span>' + money(t.total) + '</span></div>' +
+        '<button class="pill solid" type="submit" style="min-height:52px">Place Order</button>' +
+        (hasCamp ? '<p class="camp">Attributed to: ' + esc([camp.utm_source, camp.utm_medium, camp.utm_campaign].filter(Boolean).join(' / ') || 'ad click') + '</p>' : '') +
+      '</div></div></form>';
+  }
+  function setCodeMsg(text, ok) { var m = $('#c-co-msg'); m.textContent = text; m.className = 'msg ' + (ok ? 'ok' : 'err'); }
+
+  /* ---------- events ---------- */
+  root.addEventListener('click', function (e) {
+    var t = e.target.closest('button, a');
+    if (!t || !root.contains(t)) return;
+    if (t.matches('[data-open]')) { e.preventDefault(); openQV(t.getAttribute('data-open')); return; }
+    if (t.matches('[data-add]')) { if (busy) return; addHandles([t.getAttribute('data-add')], (byHandle[t.getAttribute('data-add')] || {}).title + ' added to bag'); return; }
+    if (t.matches('[data-line]')) { if (busy) return; run(backend.update(t.getAttribute('data-line'), +t.getAttribute('data-to'))); return; }
+    if (t.matches('[data-close]')) { var d = t.closest('dialog'); if (d) d.close(); return; }
+    if (t.matches('[data-close-drawer]')) { closeDrawer(); var g = t.getAttribute('data-goto'); if (g) document.getElementById(g).scrollIntoView({ behavior: 'smooth' }); return; }
+    if (t.matches('[data-variant]')) { qvState.v = +t.getAttribute('data-variant'); renderQV(); return; }
+    if (t.matches('[data-qvq]')) { qvState.qty = Math.max(1, qvState.qty + +t.getAttribute('data-qvq')); renderQV(); return; }
+    if (t.matches('[data-f]')) {
+      filter = t.getAttribute('data-f');
+      $$('#c-filters [data-f]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === t)); });
+      renderGrid(); return;
+    }
+    if (t.matches('[data-pal]')) { setPalette(t.getAttribute('data-pal')); store.set('calme-palette', t.getAttribute('data-pal')); $('#c-palette').classList.remove('open'); $('#c-pal-toggle').setAttribute('aria-expanded', 'false'); return; }
+    if (t.matches('[data-c]')) {
+      concern = t.getAttribute('data-c');
+      $$('#c-concerns [data-c]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === t)); });
+      renderGrid(); return;
+    }
+    if (t.matches('[data-filter-link]')) {
+      var f = t.getAttribute('data-filter-link');
+      var b = $('#c-filters [data-f="' + f + '"]'); if (b) b.click();
+      $('#c-nav').classList.remove('open'); $('#c-menu').setAttribute('aria-expanded', 'false');
+      return;
+    }
+    if (t.id === 'c-qv-add') {
+      if (busy) return;
+      var v = qvState.p.variants[qvState.v];
+      $('#c-qv').close();
+      run(backend.add([{ id: v.id, qty: qvState.qty }]), null, true, [itemOf(qvState.p, v, qvState.qty)]);
+      return;
+    }
+    if (t.id === 'c-rb-add') { if (busy) return; addHandles(t.getAttribute('data-handles').split(','), 'Routine added to bag'); return; }
+    if (t.id === 'c-cart-btn' || t.id === 'c-toast-view') { $('#c-toast').classList.remove('on'); openDrawer(); return; }
+    if (t.id === 'c-dr-close') { closeDrawer(); return; }
+    if (t.id === 'c-checkout') { if (cart.count) { emit('begin_checkout', ecom(cartItems())); backend.checkout(); } return; }
+    if (t.id === 'c-qv-share') { shareProduct(qvState.p); return; }
+    if (t.id === 'c-pal-toggle') { var po = $('#c-palette').classList.toggle('open'); t.setAttribute('aria-expanded', String(po)); return; }
+    if (t.id === 'c-px-toggle') { var pl = $('#c-px-log'); pl.hidden = !pl.hidden; t.setAttribute('aria-expanded', String(!pl.hidden)); return; }
+    if (t.matches('[data-consent]')) { setConsent(t.getAttribute('data-consent')); return; }
+    if (t.matches('[data-cookies]')) { $('#c-consent').hidden = false; return; }
+    if (t.matches('[data-privacy]')) { var pd = $('#c-privacy'); try { pd.showModal(); } catch (e2) { pd.setAttribute('open', ''); } return; }
+    if (t.id === 'c-skip') { emit('intro_skip'); }
+    if (t.id === 'c-menu') { var open = $('#c-nav').classList.toggle('open'); t.setAttribute('aria-expanded', String(open)); return; }
+    if (t.id === 'c-search-jump') { document.getElementById('c-shop').scrollIntoView({ behavior: 'smooth' }); setTimeout(function () { $('#c-q').focus(); }, 400); return; }
+    if (t.id === 'c-co-apply') {
+      var code = $('#c-co-code').value.trim().toUpperCase();
+      var d0 = discountFor(code);
+      if (!code) { setCodeMsg('Enter a code first.'); return; }
+      if (d0 === -2) { setCodeMsg(code + ' is not a valid code. Try WELCOME10.'); return; }
+      if (d0 === -1) { setCodeMsg('KIT19BACK needs S$38 of full-size products in the cart.'); return; }
+      co.code = code; renderCheckout(); setCodeMsg(code + ' applied: −' + money(d0), true); return;
+    }
+    if (t.matches('.nav a')) { $('#c-nav').classList.remove('open'); $('#c-menu').setAttribute('aria-expanded', 'false'); }
+  });
+  scrim.addEventListener('click', closeDrawer);
+  root.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drawer.classList.contains('on')) closeDrawer(); });
+  var searchTimer;
+  $('#c-q').addEventListener('input', function (e) {
+    query = e.target.value; renderGrid();
+    clearTimeout(searchTimer);
+    var q = query.trim();
+    if (q.length >= 3) searchTimer = setTimeout(function () { emit('search', { search_term: q.slice(0, 60), results: $$('#c-grid .card').length }); }, 900);
+  });
+  $('#c-rb-opts').addEventListener('change', function () {
+    renderRoutine();
+    var key = ($('input[name="c-skin"]:checked') || {}).value;
+    var r = ROUTINES[key];
+    if (r) emit('routine_result', Object.assign({ concern: key }, ecom(r.buy.map(function (h) { return byHandle[h]; }).filter(Boolean).map(function (p) { return itemOf(p, p.variants[0], 1); }))));
+  });
+  root.addEventListener('calme:intro', function (e) { if (e.detail === 'complete') emit('intro_complete'); });
+  $$('dialog').forEach(function (d) { d.addEventListener('click', function (e) { if (e.target === d) d.close(); }); });
+  root.addEventListener('change', function (e) { if (e.target.name === 'c-pay') co.pay = e.target.value; });
+  root.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (e.target.id === 'c-news') {
+      emit('lead', { method: 'footer_newsletter' });
+      if (inTheme) { var nf = e.target; setTimeout(function () { nf.submit(); }, 300); return; }   // Shopify's own customer form
+      toast('You\'re on the list. Use WELCOME10 for 10% off your first order.');
+      e.target.reset(); return;
+    }
+    if (e.target.id === 'c-co-form') {
+      var bad = $$('input[required]', e.target).filter(function (i) { return !i.checkValidity(); })[0];
+      if (bad) { bad.focus(); setCodeMsg('Please check ' + bad.previousElementSibling.textContent.toLowerCase() + '.'); return; }
+      var t = totals(); var no = 'CALME-' + (1000 + Math.floor(Math.random() * 9000));
+      var payText = co.pay === 'paynow' ? 'Scan the PayNow QR in your email, or pay to UEN 2026XXXXXK with reference ' + no + '.' : 'Transfer to DBS 000-000000-0 (placeholder) with reference ' + no + '.';
+      $('#c-co').innerHTML = '<div class="co"><button type="button" class="x" data-close aria-label="Close">×</button><div class="done"><span class="tick" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5 9-10"/></svg></span><h2>Thank you. Order ' + no + ' is placed.</h2>' +
+        '<p>Total ' + money(t.total) + ' · ' + esc(payText) + '</p><p class="muted">We\'ll ship within 1 to 2 working days of payment.</p><button class="pill solid" type="button" data-close>Continue shopping</button></div></div>';
+      emit('purchase_demo', Object.assign({ order: no }, ecom(cartItems())));
+      Demo.clear().then(function (c) { cart = c; renderCart(); });
+    }
+  });
+
+  // "What defines" hover highlight follows pointer, one at a time
+  $$('.def').forEach(function (d) { d.addEventListener('mouseenter', function () { $$('.def').forEach(function (x) { x.classList.toggle('on', x === d); }); }); });
+
+  // gentle parallax on the hero dropper
+  var mark = $('#c-mark'), dw = $('#c-drop-wrap');  // the gap span holding disc + dropper
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (mark && dw && !reduce) {
+    mark.addEventListener('pointermove', function (e) {
+      var r = mark.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      dw.style.transform = 'translate(' + (x * 24).toFixed(1) + 'px,' + (y * 14).toFixed(1) + 'px)';
+    });
+    mark.addEventListener('pointerleave', function () { dw.style.transform = ''; });
+  }
+
+  /* ---------- sharing, cart attribution, deep links ---------- */
+  function shareProduct(p) {
+    if (!p) return;
+    var base = inTheme ? window.location.origin + (((window.Shopify.routes && window.Shopify.routes.root) || '/') + 'products/' + p.handle) :
+      window.location.origin + window.location.pathname + '?p=' + encodeURIComponent(p.handle);
+    var url = base + (base.indexOf('?') > -1 ? '&' : '?') + 'utm_source=share&utm_medium=referral&utm_campaign=product_share';
+    var done = function (method) { emit('share', Object.assign({ method: method }, ecom([itemOf(p, p.variants[0], 1)]))); };
+    try {
+      if (navigator.share) { navigator.share({ title: p.title + ' | Calme', text: p.short, url: url }).then(function () { done('native'); }, function () {}); return; }
+    } catch (e) {}
+    var fallback = function () { toast('Copy this link: ' + url); done('link'); };
+    try { navigator.clipboard.writeText(url).then(function () { toast('Link copied. Paste it into Instagram, TikTok or WhatsApp.'); done('copy'); }, fallback); }
+    catch (e) { fallback(); }
+  }
+  // inside a theme: store where this visit came from on the cart, so it shows on the order in Shopify admin
+  function tagCart() {
+    if (!inTheme || !hasCamp || sess.get('calme-cart-tagged')) return;
+    var attrs = {}; Object.keys(camp).forEach(function (k) { attrs['_' + k] = camp[k]; });
+    Theme.req('cart/update.js', { attributes: attrs }).then(function () { sess.set('calme-cart-tagged', true); }, function () {});
+  }
+  function renderSocials() {
+    var S = CFG.socials || {}, box = $('#c-socials'); if (!box) return;
+    var icons = {
+      instagram: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>',
+      tiktok: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 2.6 2.4 4.3 5 4.5"/></svg>',
+      facebook: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg>'
+    };
+    var names = { instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook' };
+    var links = Object.keys(icons).filter(function (k) { return /^https?:\/\//.test(S[k] || ''); });
+    if (!links.length) return;
+    box.innerHTML = '<span>Follow Calme</span>' + links.map(function (k) { return '<a href="' + esc(S[k]) + '" target="_blank" rel="noopener" aria-label="Calme on ' + names[k] + '">' + icons[k] + '</a>'; }).join('');
+    box.hidden = false;
+  }
+  function campaignFeatures() {
+    if (linkCode) {
+      var off = $('#c-offer');
+      if (off) off.innerHTML = 'Code <b>' + esc(linkCode) + '</b> is saved and will be applied at checkout. Free delivery over S$60.';
+      if (inTheme) fetch(Theme.rootUrl() + 'discount/' + encodeURIComponent(linkCode), { credentials: 'same-origin' }).catch(function () {});
+    }
+    if (params.get('customer_posted') === 'true') toast('You\'re on the list. Use WELCOME10 for 10% off your first order.');
+    if (inTheme) {
+      var nf = $('#c-news');
+      if (nf) {
+        nf.setAttribute('method', 'post'); nf.setAttribute('action', Theme.rootUrl() + 'contact#c-news');
+        [['form_type', 'customer'], ['utf8', '✓'], ['contact[tags]', 'newsletter,calme-site']].forEach(function (x) {
+          var h = document.createElement('input'); h.type = 'hidden'; h.name = x[0]; h.value = x[1]; nf.appendChild(h);
+        });
+      }
+    }
+    if (showInspector) $('#c-px').hidden = false;
+    if (askConsent && !consent) $('#c-consent').hidden = false;
+    emit('page_view');
+    var deep = params.get('p');
+    if (deep && byHandle[deep]) { var shop = document.getElementById('c-shop'); if (shop) shop.scrollIntoView(); openQV(deep); }
+  }
+
+  /* ---------- boot ---------- */
+  var modeText = {
+    demo: 'Demo mode: products and checkout are simulated until the site is connected to Shopify.',
+    'shopify-storefront': 'Connected to Shopify (' + CFG.shopifyDomain + '). Checkout opens on Shopify.',
+    'shopify-theme': ''
+  };
+  function boot(be) {
+    backend = be;
+    return be.load().then(function (list) {
+      normalise(list);
+      if (!products.length) throw new Error('No products found');
+      fillImages(); renderGrid(); renderRoutine();
+      $('#c-mode').textContent = modeText[be.name] || '';
+      return be.init();
+    }).then(function (c) { cart = c; renderCart(); });
+  }
+  var featuresOn = false;
+  function bootAll(be) {
+    return boot(be).then(function () { if (!featuresOn) { featuresOn = true; renderSocials(); campaignFeatures(); } });
+  }
+  bootAll(backend).catch(function (err) {
+    if (backend !== Demo && embedded().length) {
+      console.warn('Calme: Shopify connection failed, falling back to demo.', err);
+      return bootAll(Demo).then(function () { $('#c-mode').textContent = 'Shopify connection failed (' + err.message + '). Showing demo mode.'; });
+    }
+    $('#c-grid').innerHTML = '<p class="empty">Products could not be loaded: ' + esc(err.message) + '</p>';
+  });
+})();
+{% endraw %}</script>
+<script>{% raw %}/* Calme scroll intro: a 3D cross-section of the skin barrier.
+   A plate of skin cells sits on a reservoir of glass beads (water and lipids).
+   Beats: product → healthy barrier → the surface cracks, water drains away and irritants slip in →
+   a Calme drop lands, a ripple seals the cracks and the reservoir refills → product.
+   Everything is a pure function of scroll progress, so scrolling back plays it in reverse. */
+(function () {
+  'use strict';
+  var root = document.getElementById('calme');
+  var sec = document.getElementById('c-intro');
+  if (!root || !sec) return;
+  var canvas = document.getElementById('c-3d');
+  var beats = Array.prototype.slice.call(sec.querySelectorAll('.beat'));
+  var bar = sec.querySelector('.progress i');
+  function staticMode() { sec.classList.add('static'); }
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js';
+  var FRAMES = (window.CALME_CONFIG || {}).introFrames;
+
+  /* ---------- shared helpers ---------- */
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function seg(p, a, b) { return clamp((p - a) / (b - a), 0, 1); }
+  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  var BEATS = [[-1, 0, .10, .16], [.17, .21, .31, .35], [.37, .41, .53, .57], [.59, .63, .76, .80], [.86, .91, 2, 2]];
+  var beatState = [];
+  function showBeats(p) {
+    // only touch the copy when it actually changes, so scrolling never triggers needless style work
+    beats.forEach(function (el2, n) {
+      var w0 = BEATS[n] || BEATS[BEATS.length - 1];
+      var o = Math.round(seg(p, w0[0], w0[1]) * (1 - seg(p, w0[2], w0[3])) * 500) / 500;
+      if (beatState[n] === o) return;
+      beatState[n] = o;
+      el2.style.opacity = o;
+      el2.style.transform = el2.classList.contains('center') ? 'translateY(' + ((1 - o) * 14).toFixed(1) + 'px)' : 'translateY(calc(-50% + ' + ((1 - o) * 14).toFixed(1) + 'px))';
+      el2.style.visibility = o > 0.01 ? 'visible' : 'hidden';
+    });
+    if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    // tell the page once the visitor has watched the whole story (used for "engaged visitor" audiences)
+    if (p < 0.3) introStarted = true;
+    if (!introDone && introStarted && p > 0.97) { introDone = true; try { root.dispatchEvent(new CustomEvent('calme:intro', { detail: 'complete' })); } catch (e) {} }
+  }
+  var introDone = false, introStarted = false;
+  function progress() {
+    var rect = sec.getBoundingClientRect();
+    var total = sec.offsetHeight - window.innerHeight;
+    return total > 0 ? clamp(-rect.top / total, 0, 1) : 0;
+  }
+  function tokColor(name, fb) {
+    var v = (getComputedStyle(root).getPropertyValue(name) || '').trim() || fb;
+    var m = /^#?([0-9a-f]{6})$/i.exec(v) || /^#?([0-9a-f]{6})$/i.exec(fb);
+    var n = parseInt(m[1], 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  if (FRAMES && FRAMES.count > 1 && canvas && canvas.getContext) frameSequence(FRAMES);
+  else live();
+
+  /* ---------- photoreal mode: a path-traced frame sequence scrubbed by the scroll ----------
+     Frames download coarse-first and then nearest-to-the-reader first; only the frames around the current
+     position are kept decoded (as ImageBitmaps), so scrubbing never waits on a decode and memory stays small. */
+  function frameSequence(cfg) {
+    var ctx = canvas.getContext('2d');
+    if (!ctx) { live(); return; }
+    var narrow = (window.innerWidth || 1200) < 640;
+    var useM = narrow && cfg.mobileCount > 1;
+    var N = useM ? cfg.mobileCount : cfg.count;
+    var base = useM ? (cfg.mobileBase || cfg.base) : cfg.base;
+    var prefix = useM ? (cfg.mobilePrefix || 'calme-intro-m-') : (cfg.prefix || 'calme-intro-');
+    function url(i) { return base + prefix + ('00' + i).slice(-3) + '.' + (cfg.ext || 'webp'); }
+    var imgs = new Array(N), bmp = new Array(N), busy = new Array(N), requested = new Array(N);
+    var failed = 0, loaded = 0, inflight = 0, decoding = 0, dead = false;
+    var canBitmap = typeof window.createImageBitmap === 'function';
+    var cur = 0, dir = 1;
+    var target = 0, shown = 0, dirty = true, running = false;
+
+    // network: a coarse pass over the whole story first, then whatever is nearest the reader
+    var coarse = [];
+    for (var ci = 0; ci < N; ci += 8) coarse.push(ci);
+    coarse.push(N - 1);
+    function nextToLoad() {
+      for (var k = 0; k < coarse.length; k++) if (!requested[coarse[k]]) return coarse[k];
+      for (var d = 0; d < N; d++) {
+        var a = cur + d * dir, b = cur - d * dir;
+        if (a >= 0 && a < N && !requested[a]) return a;
+        if (b >= 0 && b < N && !requested[b]) return b;
+      }
+      return -1;
+    }
+    function pump() {
+      while (!dead && inflight < 6) {
+        var i = nextToLoad();
+        if (i < 0) return;
+        requested[i] = true; inflight++;
+        load(i);
+      }
+    }
+    function load(i) {
+      var im = new Image();
+      im.onload = function () {
+        inflight--; imgs[i] = im; loaded++;
+        if (loaded === 1) sec.classList.add('ready');
+        if (Math.abs(i - cur) <= 16) decodeAround();
+        dirty = true; pump();
+      };
+      im.onerror = function () { inflight--; failed++; if (!loaded && failed >= 3) giveUp(); else pump(); };
+      im.src = url(i);
+    }
+    // decoding: keep a small window of ready-to-draw bitmaps around the current frame, ahead of the scroll
+    function decodeAround() {
+      if (!canBitmap || dead) return;
+      var ahead = 16, behind = 6;
+      var lo = Math.max(0, dir > 0 ? cur - behind : cur - ahead), hi = Math.min(N - 1, dir > 0 ? cur + ahead : cur + behind);
+      for (var i = 0; i < N; i++) {
+        if (bmp[i] && (i < lo - 8 || i > hi + 8)) { if (bmp[i].close) bmp[i].close(); bmp[i] = null; }
+      }
+      for (var d = 0; d <= ahead && decoding < 3; d++) {
+        tryDecode(cur + d * dir, lo, hi);
+        if (d && d <= behind) tryDecode(cur - d * dir, lo, hi);
+      }
+    }
+    function tryDecode(k, lo, hi) {
+      if (k < lo || k > hi || decoding >= 3 || bmp[k] || busy[k] || !imgs[k]) return;
+      busy[k] = true; decoding++;
+      createImageBitmap(imgs[k]).then(function (b) {
+        busy[k] = false; decoding--;
+        if (dead || Math.abs(k - cur) > 30) { if (b.close) b.close(); }
+        else { bmp[k] = b; if (Math.abs(k - cur) <= 2) dirty = true; }
+        decodeAround();
+      }, function () { busy[k] = false; decoding--; canBitmap = false; dirty = true; });
+    }
+    function giveUp() {
+      // the frames are not reachable: fall back to the live 3D scene on a fresh canvas
+      dead = true; running = false;
+      var c2 = canvas.cloneNode(false); canvas.parentNode.replaceChild(c2, canvas); canvas = c2;
+      live();
+    }
+    function drawable(i) { return bmp[i] || (!canBitmap && imgs[i]) || null; }
+    function pick(i, step) {
+      for (var j = i; j >= 0 && j < N; j += step) if (drawable(j)) return j;
+      return -1;
+    }
+
+    var W = 0, H = 0, dpr = 1, C0, C1, lastBg = '';
+    function readColors() { C0 = tokColor('--canvas', '#F5F5F7'); C1 = tokColor('--white', '#FFFFFF'); lastBg = ''; dirty = true; }
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      var w = canvas.clientWidth || sec.clientWidth, h = canvas.clientHeight || window.innerHeight;
+      if (Math.round(w * dpr) !== canvas.width || Math.round(h * dpr) !== canvas.height) { canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); }
+      W = w; H = h; dirty = true;
+    }
+    function draw(p) {
+      // background: the scheme's canvas colour, warming to its white as the intro meets the hero
+      var k = ease(seg(p, .82, .94));
+      var bg = 'rgb(' + Math.round(lerp(C0[0], C1[0], k)) + ',' + Math.round(lerp(C0[1], C1[1], k)) + ',' + Math.round(lerp(C0[2], C1[2], k)) + ')';
+      if (bg !== lastBg) { sec.style.setProperty('--intro-bg', bg); lastBg = bg; }
+      // placement of the square frame: centred under the product copy, beside the copy for the skin story
+      var mB = easeOut(seg(p, .14, .30)) * (1 - ease(seg(p, .82, .96)));
+      var s, cx, cy;
+      if (W >= 900) { s = Math.min(H * 1.02, W * 0.62); cx = lerp(W * 0.5, W * 0.66, mB); cy = H * 0.56; }
+      else if (W < 640) { s = Math.min(lerp(W * 1.45, W * 1.12, mB), H * 0.7); cx = W * 0.5; cy = lerp(H * 0.6, H * 0.36, mB); }
+      else { s = Math.min(W * 0.92, H * 0.8); cx = W * 0.5; cy = lerp(H * 0.6, H * 0.45, mB); }
+      var f = p * (N - 1), a = pick(Math.floor(f), -1), b = pick(Math.ceil(f), 1);
+      if (a < 0 && b < 0) {
+        // nothing decoded yet (first moments): draw the nearest downloaded frame directly
+        for (var d = 0; d < N && a < 0; d++) { var r = Math.round(f) + d, l = Math.round(f) - d; a = imgs[r] ? r : (imgs[l] ? l : -1); }
+        if (a < 0) return;
+        b = a;
+      }
+      if (a < 0) a = b; if (b < 0) b = a;
+      var A = drawable(a) || imgs[a], B = drawable(b) || imgs[b];
+      // blend neighbouring frames only; while the sequence is still streaming in, show the nearest frame
+      var t = a === b ? 0 : clamp((f - a) / (b - a), 0, 1);
+      if (b - a > 1) { if (t >= 0.5) A = B; t = 0; }
+      var x = cx - s / 2, y = cy - s / 2;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'medium';
+      ctx.globalAlpha = 1; ctx.drawImage(A, x, y, s, s);
+      if (t > 0.03) { ctx.globalAlpha = t; ctx.drawImage(B, x, y, s, s); ctx.globalAlpha = 1; }
+    }
+    function frame() {
+      if (!running) return;
+      target = progress();
+      var prev = shown;
+      shown += (target - shown) * (reduce ? 1 : 0.16);
+      if (Math.abs(target - shown) < 0.0003) shown = target;
+      var c = Math.round(shown * (N - 1));
+      if (c !== cur) { dir = c > cur ? 1 : -1; cur = c; decodeAround(); pump(); }
+      if (dirty || shown !== prev) { draw(shown); showBeats(shown); dirty = false; }
+      requestAnimationFrame(frame);
+    }
+    function start() { if (!running && !dead) { running = true; requestAnimationFrame(frame); } }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : (running = false); }, { rootMargin: '200px' }).observe(sec);
+    } else start();
+    window.addEventListener('resize', size);
+    root.addEventListener('calme:palette', readColors);
+    readColors(); size();
+    shown = target = progress(); cur = Math.round(shown * (N - 1));
+    pump(); showBeats(shown);
+  }
+
+  /* ---------- live mode: the real-time WebGL scene ---------- */
+  function live() {
+  if (!canvas || !canvas.getContext) { staticMode(); return; }
+  if (!window.THREE) {
+    var tag = document.createElement('script'); tag.src = THREE_URL;
+    tag.onload = function () { window.THREE ? live() : staticMode(); }; tag.onerror = staticMode;
+    document.head.appendChild(tag); return;
+  }
+
+  var T = window.THREE;
+  var small = (window.innerWidth || 1200) < 640;
+  var renderer;
+  try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' }); }
+  catch (e) { staticMode(); return; }
+  var pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(pixelRatio);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.toneMapping = T.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+
+  var scene = new T.Scene();
+  var camera = new T.PerspectiveCamera(30, 1, 0.1, 100);
+
+  scene.add(new T.HemisphereLight(0xffffff, 0xd8d6d2, 0.95));
+  var key = new T.DirectionalLight(0xffffff, 0.8);
+  key.position.set(5, 9, 8); key.castShadow = true;
+  key.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
+  var sc = key.shadow.camera; sc.left = -9; sc.right = 9; sc.top = 9; sc.bottom = -9; sc.near = 1; sc.far = 40;
+  key.shadow.radius = 4;
+  scene.add(key);
+  var rim = new T.DirectionalLight(0xffffff, 0.3); rim.position.set(-7, 4, 5); scene.add(rim);
+
+  // studio environment for every glossy surface: a dark surround (which draws the dark edge lines in glass)
+  // with softbox strips for the highlights
+  var pmrem = new T.PMREMGenerator(renderer);
+  var envTex = (function () {
+    var e = new T.Scene();
+    e.add(new T.Mesh(new T.SphereGeometry(30, 48, 24), new T.MeshBasicMaterial({ color: 0x1c1c1e, side: T.BackSide })));
+    var fl = new T.Mesh(new T.PlaneGeometry(80, 80), new T.MeshBasicMaterial({ color: 0x8a8a8c })); fl.rotation.x = -Math.PI / 2; fl.position.y = -6; e.add(fl);
+    function box(w, h, x, y, z, k) { var m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: new T.Color(k, k, k), side: T.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 1, 0); e.add(m); }
+    box(7, 11, -11, 3, 7, 3.2); box(1.6, 13, 12, 2, 4, 3.0); box(1.2, 13, -12.5, 2, -3, 2.2); box(1.2, 13, 11, 2, -6, 2.0); box(10, 10, 0, 14, 2, 1.6); box(3.5, 6, 6, 2, 12, 0.9);
+    return pmrem.fromScene(e, 0, 0.1, 100).texture;
+  })();
+
+  /* ---------- helpers ---------- */
+  var seed = 11, seed2 = 7;
+  function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  function rnd2() { seed2 = (seed2 * 48271) % 2147483647; return (seed2 - 1) / 2147483646; }
+  function V(x, y, z) { return new T.Vector3(x, y, z); }
+
+  /* ---------- palette (read from the page's CSS tokens) ---------- */
+  function tok(name, fb) { var v = getComputedStyle(root).getPropertyValue(name).trim(); return v || fb; }
+  var C = { bg: new T.Color(), white: new T.Color('#ffffff'), mortar: new T.Color(), accent: new T.Color() };
+
+  /* ---------- the skin block ---------- */
+  var HALF = 2.8;          // plate half-size
+  var PLATE_T = 0.16;      // plate thickness
+  var DEPTH = 3.1;         // reservoir depth under the plate
+  var BELOW = 12;          // how far below the frame the block waits before it rises in
+  var block = new T.Group(); scene.add(block);
+  var inner = new T.Group(); block.add(inner);
+
+  // skin surface maps, drawn once on the GPU and mapped across the whole plate:
+  // a height map (soft relief, a fine network of furrows and pores) and a tone map (gentle mottling)
+  var skinMaps = (function (N) {
+    var opts = { generateMipmaps: true, minFilter: T.LinearMipmapLinearFilter, magFilter: T.LinearFilter, depthBuffer: false, stencilBuffer: false };
+    var hRT = new T.WebGLRenderTarget(N, N, opts), cRT = new T.WebGLRenderTarget(N, N, opts);
+    var mat = new T.ShaderMaterial({
+      depthTest: false, depthWrite: false, toneMapped: false,
+      uniforms: { uMode: { value: 0 }, uSize: { value: 2 * HALF } },
+      vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+      fragmentShader: [
+        'precision highp float;',
+        'varying vec2 vUv; uniform float uMode; uniform float uSize;',
+        'float h21(vec2 p) { p = fract(p * vec2(234.34, 435.345)); p += dot(p, p + 34.23); return fract(p.x * p.y); }',
+        'vec2 h22(vec2 p) { float n = h21(p); return vec2(n, h21(p + n + 19.19)); }',
+        'float vn(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);',
+        '  return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), u.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), u.x), u.y); }',
+        'float fbm(vec2 p) { float s = 0.0, a = 0.5; for (int i = 0; i < 5; i++) { s += a * vn(p); p = p * 2.07 + vec2(17.3, 9.1); a *= 0.5; } return s / 0.96875; }',
+        'vec3 vor(vec2 p) { vec2 i = floor(p), f = fract(p); float d1 = 9.0, d2 = 9.0, id = 0.0;',
+        '  for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {',
+        '    vec2 g = vec2(float(x), float(y)); vec2 r = g + 0.15 + 0.7 * h22(i + g) - f; float d = dot(r, r);',
+        '    if (d < d1) { d2 = d1; d1 = d; id = h21(i + g + 3.7); } else if (d < d2) { d2 = d; } }',
+        '  return vec3(sqrt(d1), sqrt(d2) - sqrt(d1), id); }',
+        'void main() {',
+        '  vec2 p = (vUv - 0.5) * uSize;',
+        '  float big = fbm(p * 0.9), mid = fbm(p * 3.1 + 4.0), fine = fbm(p * 15.0 + 9.0);',
+        '  vec2 w = vec2(fbm(p * 1.7 + 2.0), fbm(p * 1.7 + 7.3)) - 0.5;',
+        '  vec3 v1 = vor(p * 6.5 + w * 1.6);',
+        '  vec3 v2 = vor(p * 15.0 + w * 2.5 + 3.3);',
+        '  float f1 = 1.0 - smoothstep(0.0, 0.085, v1.y);',
+        '  float f2 = 1.0 - smoothstep(0.0, 0.07, v2.y);',
+        '  vec3 vp = vor(p * 22.0 + 11.0);',
+        '  float pore = (1.0 - smoothstep(0.05, 0.15, vp.x)) * step(0.8, vp.z);',
+        '  if (uMode < 0.5) {',
+        '    float h = 0.62 + 0.12 * (mid - 0.5) + 0.08 * (fine - 0.5) - 0.30 * f1 - 0.12 * f2 - 0.35 * pore;',
+        '    gl_FragColor = vec4(vec3(clamp(h, 0.0, 1.0)), 1.0);',
+        '  } else {',
+        '    float m = 0.965 + 0.08 * (big - 0.5) + 0.035 * (mid - 0.5) - 0.05 * f1 - 0.025 * f2 - 0.07 * pore;',
+        '    gl_FragColor = vec4(clamp(vec3(m, m * (0.995 - 0.06 * (big - 0.5)), m * (0.99 - 0.08 * (big - 0.5))), 0.0, 1.0), 1.0);',
+        '  }',
+        '}'
+      ].join('\n')
+    });
+    var q = new T.Mesh(new T.PlaneGeometry(2, 2), mat), s2 = new T.Scene(), c2 = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    q.frustumCulled = false; s2.add(q);
+    var prev = renderer.getRenderTarget();
+    renderer.setRenderTarget(hRT); renderer.render(s2, c2);
+    mat.uniforms.uMode.value = 1; mat.uniformsNeedUpdate = true;
+    renderer.setRenderTarget(cRT); renderer.render(s2, c2);
+    renderer.setRenderTarget(prev);
+    mat.dispose(); q.geometry.dispose();
+    var an = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    [hRT.texture, cRT.texture].forEach(function (t) { t.repeat.set(1 / (2 * HALF), 1 / (2 * HALF)); t.offset.set(0.5, 0.5); t.anisotropy = an; });
+    return { height: hRT.texture, tone: cRT.texture };
+  })(small ? 512 : 1024);
+
+  // one satin skin material for every cell: vertex colours deepen the walls of each crack
+  var HEALTHY = new T.Color('#C46A55'), DRY = new T.Color('#BE8A72');
+  var skinMat = new T.MeshPhysicalMaterial({
+    color: HEALTHY.clone(), vertexColors: true, map: skinMaps.tone, bumpMap: skinMaps.height, bumpScale: 0.012,
+    roughness: 0.55, metalness: 0, sheen: 0.4, sheenRoughness: 0.55, sheenColor: new T.Color('#F0B4A0'),
+    clearcoat: 0.12, clearcoatRoughness: 0.4,
+    specularIntensity: 0.35, envMap: envTex, envMapIntensity: 0.35
+  });
+  // the living layer under the cells: hidden while the barrier is whole, it shows (and reddens) through the cracks
+  var UNDER = new T.Color('#93453A'), INFLAMED = new T.Color('#A8382C');
+  var underMat = new T.MeshStandardMaterial({ color: UNDER.clone(), roughness: 0.8, metalness: 0 });
+  var under = new T.Mesh(new T.BoxGeometry(2 * HALF - 0.03, 0.03, 2 * HALF - 0.03), underMat);
+  under.position.y = -0.016; under.receiveShadow = true;
+  inner.add(under);
+
+  // Voronoi cells: a jittered 7 x 7 grid of seeds, each cell clipped from the square by bisectors
+  function clipPoly(poly, nx, nz, d) {
+    var out = [];
+    for (var i = 0; i < poly.length; i++) {
+      var a = poly[i], b = poly[(i + 1) % poly.length];
+      var da = nx * a[0] + nz * a[1] - d, db = nx * b[0] + nz * b[1] - d;
+      if (da <= 0) out.push(a);
+      if ((da <= 0) !== (db <= 0)) { var t = da / (da - db); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); }
+    }
+    return out;
+  }
+  // corners are pooled so neighbouring cells share exactly the same coordinates,
+  // and every shared edge gets one jagged crack line that both cells follow (so they fit back together)
+  var corners = [];
+  function snap(q) {
+    for (var i = 0; i < corners.length; i++) { var o = corners[i]; if (Math.abs(o[0] - q[0]) < 1e-6 && Math.abs(o[1] - q[1]) < 1e-6) return o; }
+    corners.push(q); return q;
+  }
+  function onBorder(a, b) {
+    return (Math.abs(a[0]) > HALF - 1e-6 && Math.abs(b[0]) > HALF - 1e-6 && a[0] * b[0] > 0) ||
+           (Math.abs(a[1]) > HALF - 1e-6 && Math.abs(b[1]) > HALF - 1e-6 && a[1] * b[1] > 0);
+  }
+  var crackLines = {};
+  function crackPts(a, b) {
+    if (onBorder(a, b)) return [];
+    var ia = corners.indexOf(a), ib = corners.indexOf(b), flip = ia > ib, k = flip ? ib + '_' + ia : ia + '_' + ib;
+    if (!crackLines[k]) {
+      var p0 = flip ? b : a, p1 = flip ? a : b, dx = p1[0] - p0[0], dz = p1[1] - p0[1], len = Math.hypot(dx, dz), pts = [];
+      if (len > 0.05) {
+        var n = Math.max(2, Math.round(len / 0.045)), nx = -dz / len, nz = dx / len, amp = Math.min(0.034, len * 0.1);
+        var o1 = rnd2() * 6.283, o2 = rnd2() * 6.283, o3 = rnd2() * 6.283;
+        for (var i = 1; i < n; i++) {
+          var t = i / n, s = t * len, taper = Math.pow(Math.sin(Math.PI * t), 0.7);
+          var off = amp * taper * (0.62 * Math.sin(s * 13.5 + o1) + 0.28 * Math.sin(s * 31 + o2) + 0.16 * Math.sin(s * 67 + o3) + 0.22 * (rnd2() - 0.5));
+          pts.push([p0[0] + dx * t + nx * off, p0[1] + dz * t + nz * off]);
+        }
+      }
+      crackLines[k] = pts;
+    }
+    return flip ? crackLines[k].slice().reverse() : crackLines[k];
+  }
+
+  var GRID = 7, seeds = [];
+  for (var gx = 0; gx < GRID; gx++) for (var gz = 0; gz < GRID; gz++) {
+    seeds.push([-HALF + (gx + 0.5 + (rnd() - .5) * 0.85) * (2 * HALF / GRID), -HALF + (gz + 0.5 + (rnd() - .5) * 0.85) * (2 * HALF / GRID)]);
+  }
+  var polys = [];
+  seeds.forEach(function (s, i) {
+    var poly = [[-HALF, -HALF], [HALF, -HALF], [HALF, HALF], [-HALF, HALF]];
+    seeds.forEach(function (o, j) {
+      if (i === j) return;
+      var nx = o[0] - s[0], nz = o[1] - s[1];
+      poly = clipPoly(poly, nx, nz, nx * (s[0] + o[0]) / 2 + nz * (s[1] + o[1]) / 2);
+    });
+    var clean = [];
+    poly.forEach(function (q) { var l = clean[clean.length - 1]; if (!l || Math.abs(l[0] - q[0]) > 1e-7 || Math.abs(l[1] - q[1]) > 1e-7) clean.push(q); });
+    if (clean.length > 1 && Math.abs(clean[0][0] - clean[clean.length - 1][0]) < 1e-7 && Math.abs(clean[0][1] - clean[clean.length - 1][1]) < 1e-7) clean.pop();
+    polys.push(clean.length >= 3 ? clean.map(snap) : null);
+  });
+
+  var tiles = [], edgePts = [];
+  var BT = 0.022, BS = 0.014;   // bevel: rounded top edge of each cell
+  polys.forEach(function (poly) {
+    if (!poly) return;
+    var cx = 0, cz = 0; poly.forEach(function (q) { cx += q[0]; cz += q[1]; }); cx /= poly.length; cz /= poly.length;
+    var outline = [];
+    for (var e = 0; e < poly.length; e++) { var a = poly[e], b = poly[(e + 1) % poly.length]; outline.push(a); outline = outline.concat(crackPts(a, b)); }
+    var shape = new T.Shape(outline.map(function (q) { return new T.Vector2(q[0], -q[1]); }));
+    var g = new T.ExtrudeGeometry(shape, { depth: PLATE_T - 2 * BT, bevelEnabled: true, bevelThickness: BT, bevelSize: BS, bevelSegments: 3, curveSegments: 1 });
+    g.rotateX(-Math.PI / 2); g.translate(-cx, BT, -cz);
+    // vertex colours: the satin top keeps the skin tone; the crack walls deepen towards the dermis
+    var pos = g.attributes.position, cols = new Float32Array(pos.count * 3);
+    var jit = 0.97 + rnd2() * 0.06, warm = (rnd2() - 0.5) * 0.035;
+    for (var vi = 0; vi < pos.count; vi++) {
+      var kk = clamp((pos.getY(vi) - 0.095) / (PLATE_T - 0.099), 0, 1); kk = kk * kk * (3 - 2 * kk);
+      cols[vi * 3] = jit * lerp(0.80, 1, kk) * (1 + warm);
+      cols[vi * 3 + 1] = jit * lerp(0.58, 1, kk);
+      cols[vi * 3 + 2] = jit * lerp(0.54, 1, kk) * (1 - warm);
+    }
+    g.setAttribute('color', new T.BufferAttribute(cols, 3));
+    var m = new T.Mesh(g, skinMat);
+    m.position.set(cx, 0, cz); m.castShadow = true;
+    inner.add(m);
+    tiles.push({ m: m, cx: cx, cz: cz, d: Math.hypot(cx, cz), sh: 0.885 + rnd() * 0.06,
+      rx: (rnd() - .5) * 0.16, rz: (rnd() - .5) * 0.16, ly: 0.015 + rnd() * 0.05 });
+    // points along this cell's interior edges, where irritants can lodge
+    for (var k = 0; k < poly.length; k++) {
+      var p0 = poly[k], p1 = poly[(k + 1) % poly.length];
+      if (onBorder(p0, p1)) continue;
+      var t = 0.25 + rnd() * 0.5; edgePts.push([p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t]);
+    }
+  });
+
+  /* reservoir: glass beads packed into the block */
+  var NS = small ? 560 : 1150;
+  var radii = [];
+  for (var i = 0; i < NS; i++) {
+    var u = rnd();
+    radii.push(u < 0.06 ? 0.22 + rnd() * 0.1 : u < 0.32 ? 0.13 + rnd() * 0.09 : 0.06 + rnd() * 0.07);
+  }
+  radii.sort(function (a, b) { return b - a; });
+  var CELL = 0.7, hash = {}, bubbles = [];
+  function hkey(x, y, z) { return Math.floor(x / CELL) + ',' + Math.floor(y / CELL) + ',' + Math.floor(z / CELL); }
+  function fits(x, y, z, r) {
+    var ix = Math.floor(x / CELL), iy = Math.floor(y / CELL), iz = Math.floor(z / CELL);
+    for (var a = -1; a <= 1; a++) for (var b = -1; b <= 1; b++) for (var c = -1; c <= 1; c++) {
+      var list = hash[(ix + a) + ',' + (iy + b) + ',' + (iz + c)];
+      if (!list) continue;
+      for (var n = 0; n < list.length; n++) {
+        var o = bubbles[list[n]];
+        var dx = o.h.x - x, dy = o.h.y - y, dz = o.h.z - z, mr = (o.r + r) * 0.8;
+        if (dx * dx + dy * dy + dz * dz < mr * mr) return false;
+      }
+    }
+    return true;
+  }
+  radii.forEach(function (r) {
+    for (var tries = 0; tries < 50; tries++) {
+      var x = -HALF + r + rnd() * (2 * HALF - 2 * r), z = -HALF + r + rnd() * (2 * HALF - 2 * r);
+      var y = -DEPTH + r + rnd() * (DEPTH - 2 * r - 0.02);
+      if (rnd() < 0.45) {                       // half the beads hug a face, so the block keeps a crisp outline
+        var f = Math.floor(rnd() * 5);
+        if (f === 0) x = HALF - r; else if (f === 1) x = -HALF + r; else if (f === 2) z = HALF - r; else if (f === 3) z = -HALF + r; else y = -DEPTH + r;
+      }
+      if (!fits(x, y, z, r)) continue;
+      var h = V(x, y, z), out = V(x, 0, z);
+      if (out.lengthSq() < 0.01) out.set(rnd() - .5, 0, rnd() - .5);
+      out.normalize();
+      var idx = bubbles.length;
+      bubbles.push({
+        h: h, r: r,
+        t: h.clone().addScaledVector(out, 0.4 + rnd() * 2.4).add(V((rnd() - .5) * 0.6, -(0.9 + rnd() * 3.4), (rnd() - .5) * 0.6)),
+        lost: rnd() < 0.55, ss: 0.55 + rnd() * 0.4,
+        dd: rnd() * 0.35 + 0.22 * ((y + DEPTH) / DEPTH),
+        dr: 0, ph: rnd() * 6.283
+      });
+      (hash[hkey(x, y, z)] = hash[hkey(x, y, z)] || []).push(idx);
+      return;
+    }
+  });
+  var impactLocal = V(0, PLATE_T, 0);
+  var maxDR = 0;
+  bubbles.forEach(function (b) { b.dr = b.h.distanceTo(impactLocal); maxDR = Math.max(maxDR, b.dr); });
+  bubbles.forEach(function (b) { b.dr = (b.dr / maxDR) * 0.45 + rnd() * 0.12; });
+
+  // Beads touching a side face form the outer skin of the block and are truly refractive: each one traces the
+  // light through a sphere (in, across, out) and samples what lies behind it. The beads inside are drawn as
+  // an opaque glass layer, which is exactly what the outer beads see and bend.
+  var NB = bubbles.length, nOut = 0, nIn = 0;
+  bubbles.forEach(function (b) {
+    b.outer = Math.min(HALF - Math.abs(b.h.x), HALF - Math.abs(b.h.z)) < b.r + 0.14;
+    b.slot = b.outer ? nOut++ : nIn++;
+  });
+  var BEAD = { uBack: { value: 1.25 }, uRing: { value: 0.5 }, uBody: { value: new T.Color(1, 1, 1) }, uIor: { value: 1.45 } };
+  var OPTICS = [
+    '  vec3 bV = normalize( cameraPosition - vBPos );',
+    '  vec3 bN = normalize( vBPos - vBCen );',
+    '  vec3 bD1 = refract( - bV, bN, 1.0 / uIor );',
+    '  float bChord = max( 0.0, - 2.0 * vBRad * dot( bN, bD1 ) );',
+    '  vec3 bX = vBPos + bD1 * bChord;',
+    '  vec3 bD2 = refract( bD1, - normalize( bX - vBCen ), uIor );',
+    '  if ( dot( bD2, bD2 ) < 0.01 ) bD2 = reflect( bD1, - normalize( bX - vBCen ) );',
+    '  float bRing = 1.0 - uRing * smoothstep( 0.06, 0.55, 1.0 - clamp( dot( bD2, - bV ), 0.0, 1.0 ) );',
+    '  #ifdef USE_COLOR',
+    '  vec3 bTint = pow( max( vColor, vec3( 0.001 ) ), vec3( bChord / max( 2.0 * vBRad, 1e-4 ) ) );',
+    '  #else',
+    '  vec3 bTint = vec3( 1.0 );',
+    '  #endif'
+  ].join('\n');
+  function beadShader(sh, refractive) {
+    sh.uniforms.uBack = BEAD.uBack; sh.uniforms.uRing = BEAD.uRing; sh.uniforms.uBody = BEAD.uBody; sh.uniforms.uIor = BEAD.uIor;
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vBPos;\nvarying vec3 vBCen;\nvarying float vBRad;')
+      .replace('#include <fog_vertex>', [
+        '#include <fog_vertex>',
+        '  #ifdef USE_INSTANCING',
+        '  mat4 bM = modelMatrix * instanceMatrix;',
+        '  #else',
+        '  mat4 bM = modelMatrix;',
+        '  #endif',
+        '  vBCen = ( bM * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;',
+        '  vBRad = length( bM[ 0 ].xyz );',
+        '  vBPos = ( bM * vec4( transformed, 1.0 ) ).xyz;'
+      ].join('\n'));
+    var fs = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vBPos;\nvarying vec3 vBCen;\nvarying float vBRad;\nuniform float uBack;\nuniform float uRing;\nuniform vec3 uBody;\nuniform float uIor;')
+      // a perfect sphere normal per pixel, whatever the tessellation
+      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n  normal = normalize( ( viewMatrix * vec4( normalize( vBPos - vBCen ), 0.0 ) ).xyz );\n  geometryNormal = normal;');
+    if (refractive) {
+      fs = fs.replace('#include <transmission_fragment>', [
+        '#ifdef USE_TRANSMISSION',
+        '  {',
+        OPTICS,
+        '  vec4 bNdc = projectionMatrix * viewMatrix * vec4( bX + bD2 * uBack, 1.0 );',
+        '  vec3 bT = getTransmissionSample( bNdc.xy / bNdc.w * 0.5 + 0.5, material.roughness, uIor ).rgb;',
+        '  vec3 bF = EnvironmentBRDF( bN, bV, material.specularColor, material.specularF90, material.roughness );',
+        '  material.transmissionAlpha = 1.0;',
+        '  totalDiffuse = mix( totalDiffuse, ( 1.0 - bF ) * bT * bRing * bTint, transmission );',
+        '  }',
+        '#endif'
+      ].join('\n'));
+    } else {
+      fs = fs.replace('#include <emissivemap_fragment>', [
+        '#include <emissivemap_fragment>',
+        '  {',
+        OPTICS,
+        '  float bF0 = pow2( ( uIor - 1.0 ) / ( uIor + 1.0 ) );',
+        '  float bF = bF0 + ( 1.0 - bF0 ) * pow( 1.0 - clamp( dot( bN, bV ), 0.0, 1.0 ), 5.0 );',
+        '  totalEmissiveRadiance = uBody * bRing * bTint * ( 1.0 - bF );',
+        '  }'
+      ].join('\n'));
+    }
+    sh.fragmentShader = fs;
+  }
+  var beadOuterMat = new T.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0, transmission: 1, thickness: 0.3, ior: 1.45,
+    specularIntensity: 1, envMap: envTex, envMapIntensity: 1, toneMapped: false });
+  beadOuterMat.onBeforeCompile = function (sh) { beadShader(sh, true); };
+  beadOuterMat.customProgramCacheKey = function () { return 'calme-bead-refractive'; };
+  var beadInnerMat = new T.MeshPhysicalMaterial({ color: 0x000000, metalness: 0, roughness: 0, ior: 1.45,
+    specularIntensity: 1, envMap: envTex, envMapIntensity: 1, toneMapped: false });
+  beadInnerMat.onBeforeCompile = function (sh) { beadShader(sh, false); };
+  beadInnerMat.customProgramCacheKey = function () { return 'calme-bead-body'; };
+
+  var beadGeo = new T.SphereGeometry(1, small ? 18 : 24, small ? 12 : 16);
+  var beadsOut = new T.InstancedMesh(beadGeo, beadOuterMat, Math.max(1, nOut));
+  var beadsIn = new T.InstancedMesh(beadGeo, beadInnerMat, Math.max(1, nIn));
+  var GOLD = new T.Color('#F0C97E'), CLEAR = new T.Color(1, 1, 1), tintC = new T.Color();
+  [beadsOut, beadsIn].forEach(function (m) {
+    m.frustumCulled = false;
+    m.instanceMatrix.setUsage(T.DynamicDrawUsage);
+    for (var s = 0; s < m.count; s++) m.setColorAt(s, CLEAR);
+    m.instanceColor.setUsage(T.DynamicDrawUsage);
+    inner.add(m);
+  });
+  var dummy = new T.Object3D();
+
+  /* irritants: small amber specks that settle into the cracks */
+  var NI = 34;
+  var irrMat = new T.MeshPhysicalMaterial({ color: 0x6A3412, roughness: 0.45, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.35, envMap: envTex, envMapIntensity: 0.5 });
+  var irritants = new T.InstancedMesh(new T.SphereGeometry(0.05, 14, 10), irrMat, NI);
+  irritants.frustumCulled = false; inner.add(irritants);
+  var irr = [];
+  for (var q = 0; q < NI; q++) {
+    var e = edgePts[Math.floor(rnd() * edgePts.length)] || [0, 0];
+    irr.push({ e: V(e[0], PLATE_T * 0.55, e[1]), s: V(e[0] + (rnd() - .5) * 2.4, 1.6 + rnd() * 2.2, e[1] + (rnd() - .5) * 2.4),
+      o: rnd() * 0.45, k: 0.7 + rnd() * 0.7, d: Math.hypot(e[0], e[1]) });
+  }
+
+  /* the ripple: a soft glowing ring that seals the surface as it spreads */
+  var ringC = document.createElement('canvas'); ringC.width = ringC.height = 256;
+  (function () {
+    var g = ringC.getContext('2d');
+    var grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grd.addColorStop(0, 'rgba(255,255,255,0.10)'); grd.addColorStop(0.62, 'rgba(255,255,255,0.06)');
+    grd.addColorStop(0.8, 'rgba(255,255,255,0.55)'); grd.addColorStop(0.9, 'rgba(255,255,255,1)');
+    grd.addColorStop(0.97, 'rgba(255,255,255,0.3)'); grd.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+  })();
+  var ringTex = new T.CanvasTexture(ringC);
+  function makeRing() {
+    var mat = new T.MeshBasicMaterial({ map: ringTex, transparent: true, depthWrite: false, blending: T.AdditiveBlending, toneMapped: false });
+    var r = new T.Mesh(new T.PlaneGeometry(1, 1), mat);
+    r.rotation.x = -Math.PI / 2; r.position.y = PLATE_T + 0.012; r.renderOrder = 6;
+    inner.add(r); return r;
+  }
+  var ring1 = makeRing(), ring2 = makeRing();
+
+  /* ---------- the dropper bottle ---------- */
+  var labelCanvas = document.createElement('canvas'); labelCanvas.width = 2048; labelCanvas.height = 512;
+  var labelTex = new T.CanvasTexture(labelCanvas); labelTex.encoding = T.sRGBEncoding; labelTex.anisotropy = 4;
+  function drawLabel() {
+    var g = labelCanvas.getContext('2d');
+    g.clearRect(0, 0, 2048, 512);
+    var fam = '-apple-system, "Inter", "Helvetica Neue", Arial, sans-serif';
+    g.fillStyle = '#FFFFFF'; g.fillRect(704, 70, 640, 400);
+    g.textAlign = 'center';
+    g.fillStyle = '#' + C.accent.getHexString(); g.font = '600 40px ' + fam;
+    g.fillText('C  A  L  M  E', 1024, 150);
+    g.fillRect(994, 176, 60, 4);
+    g.fillStyle = '#1D1D1F'; g.font = '600 54px ' + fam;
+    g.fillText('Ceramide', 1024, 260); g.fillText('Recovery Serum', 1024, 322);
+    g.fillStyle = '#6E6E73'; g.font = '400 26px ' + fam;
+    g.fillText('Ceramides 3:1:1 · Niacinamide 2%', 1024, 380);
+    g.fillText('30 ml', 1024, 428);
+    labelTex.needsUpdate = true;
+  }
+  var bottle = new T.Group(); scene.add(bottle);
+  function lathe(pts, seg) { return new T.LatheGeometry(pts.map(function (p) { return new T.Vector2(p[0], p[1]); }), seg || 128); }
+  // Boston-round dropper bottle, 30 ml
+  var BR = 0.6, prof = [[0, 0], [0.5, 0], [0.555, 0.01], [0.584, 0.035], [0.597, 0.075], [0.6, 0.13], [0.6, 1.2]];
+  for (var pi = 1; pi <= 14; pi++) { var pa = pi / 14 * Math.PI / 2; prof.push([0.305 + 0.295 * Math.cos(pa), 1.2 + 0.36 * Math.sin(pa)]); }
+  prof.push([0.282, 1.575], [0.27, 1.605], [0.27, 1.82], [0, 1.82]);
+  var glassMat = new T.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.02, transmission: 1, thickness: 0.14, ior: 1.5,
+    specularIntensity: 1, envMap: envTex, envMapIntensity: 1.0, toneMapped: false });
+  var body = new T.Mesh(lathe(prof, 144), glassMat); bottle.add(body);
+  function edgeMat(strength, lo, hi, inner) {
+    return new T.ShaderMaterial({
+      transparent: true, depthWrite: false, depthTest: !inner,
+      uniforms: { uS: { value: strength }, uLo: { value: lo }, uHi: { value: hi }, uA: { value: 1 } },
+      vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 wp = modelMatrix * vec4(position, 1.0); vN = normalize(mat3(modelMatrix) * normal); vV = normalize(cameraPosition - wp.xyz); gl_Position = projectionMatrix * viewMatrix * wp; }',
+      fragmentShader: 'uniform float uS; uniform float uLo; uniform float uHi; uniform float uA; varying vec3 vN; varying vec3 vV; void main(){ float f = 1.0 - abs(dot(normalize(vN), normalize(vV))); float d = smoothstep(uLo, uHi, f) * (1.0 - 0.75 * smoothstep(0.975, 1.0, f)); gl_FragColor = vec4(0.15, 0.16, 0.18, d * uS * uA); }'
+    });
+  }
+  var edgeOuter = new T.Mesh(lathe(prof, 144), edgeMat(0.5, 0.7, 0.93, false)); edgeOuter.renderOrder = 8; bottle.add(edgeOuter);
+  var inProf = [[0.552, 0.14]].concat(prof.filter(function (q) { return q[1] > 0.14 && q[1] < 1.4; }).map(function (q) { return [q[0] * 0.92, q[1]]; }));
+  var edgeInner = new T.Mesh(lathe(inProf, 144), edgeMat(0.28, 0.82, 0.97, true)); edgeInner.renderOrder = 9; bottle.add(edgeInner);
+  // milky serum inside (opaque, so the glass refracts it)
+  var liquid = new T.Mesh(lathe([[0, 0.19], [0.47, 0.19], [0.52, 0.202], [0.544, 0.24], [0.55, 0.29], [0.55, 1.08], [0.538, 1.1], [0.47, 1.088], [0, 1.086]], 96),
+    new T.MeshPhysicalMaterial({ color: 0x8A857D, metalness: 0, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.2, envMap: envTex, envMapIntensity: 0.6 }));
+  liquid.castShadow = true; bottle.add(liquid);
+  var pipette = new T.Mesh(new T.CylinderGeometry(0.05, 0.04, 1.5, 24), new T.MeshPhysicalMaterial({ color: 0x8E9297, roughness: 0.05, clearcoat: 1, envMap: envTex, envMapIntensity: 1.2 }));
+  pipette.position.y = 0.95; bottle.add(pipette);
+  var sleeve = new T.Mesh(new T.CylinderGeometry(0.604, 0.604, 0.95, 96, 1, true, Math.PI, Math.PI * 2),
+    new T.MeshStandardMaterial({ map: labelTex, transparent: true, roughness: 0.55, metalness: 0, envMap: envTex, envMapIntensity: 0.6 }));
+  sleeve.position.y = 0.66; sleeve.renderOrder = 10; bottle.add(sleeve);
+  var alu = new T.MeshPhysicalMaterial({ color: 0xD7DADF, metalness: 1, roughness: 0.3, envMap: envTex, envMapIntensity: 1.15 });
+  var collar = new T.Mesh(lathe([[0, 1.6], [0.29, 1.6], [0.3, 1.61], [0.305, 1.63], [0.305, 1.98], [0.3, 2.0], [0.285, 2.01], [0, 2.01]]), alu);
+  collar.castShadow = true; bottle.add(collar);
+  var bulb = new T.Mesh(lathe([[0, 2.0], [0.2, 2.0], [0.205, 2.03], [0.19, 2.06], [0.14, 2.09], [0.13, 2.13], [0.15, 2.2], [0.17, 2.29], [0.168, 2.37], [0.15, 2.44], [0.11, 2.5], [0.05, 2.53], [0, 2.535]], 64),
+    new T.MeshPhysicalMaterial({ color: 0xD8D3CA, metalness: 0, roughness: 0.7, sheen: 0.5, sheenColor: new T.Color(0xffffff), envMap: envTex, envMapIntensity: 0.8 }));
+  bulb.castShadow = true; bottle.add(bulb);
+  bottle.children.forEach(function (o) { o.position.y -= 1.1; });
+
+  var floorMat = new T.ShadowMaterial({ opacity: 0.12, transparent: true, depthWrite: false });
+  var floor = new T.Mesh(new T.PlaneGeometry(30, 30), floorMat); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+  // one milky drop of serum
+  var dropMat = new T.MeshPhysicalMaterial({ color: 0xFBF9F5, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.1, transparent: true });
+  var drop = new T.Mesh(new T.SphereGeometry(0.17, 32, 20), dropMat); drop.visible = false; drop.renderOrder = 5; scene.add(drop);
+
+  function readPalette() {
+    C.bg.set(tok('--canvas', '#F5F5F7'));
+    C.white.set(tok('--white', '#FFFFFF'));
+    C.mortar.set(tok('--mortar', '#A9BFD6'));
+    C.accent.set(tok('--blue', '#2F5C8A'));
+    var glow = new T.Color('#FFE3E6').lerp(C.mortar, 0.4);
+    ring1.material.color.copy(glow); ring2.material.color.copy(glow);
+    drawLabel();
+  }
+  readPalette();
+  root.addEventListener('calme:palette', function () { readPalette(); render(true); });
+
+  /* ---------- timeline ---------- */
+
+  var wide = true, mobile = false;
+  function resize() {
+    var w = sec.clientWidth, h = Math.max(1, (sec.querySelector('.intro-stick') || sec).clientHeight);
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    wide = w >= 900; mobile = w < 640;
+    render(true);
+  }
+
+  var target = 0, shown = 0, t0 = performance.now();
+
+  var tmpA = V(0, 0, 0), tmpB = V(0, 0, 0), tmpC = V(0, 0, 0);
+  function apply(p, time) {
+    var side = wide ? 2.5 : 0;          // the scene sits right of the copy on wide screens
+    var lift = mobile ? 1.5 : 0;        // and above the copy on phones
+    var offY = mobile ? 16 : 8;
+    var idle = reduce ? 0 : time;
+
+    // background: canvas grey → the scheme's white at the very end (meets the hero)
+    var endFade = ease(seg(p, .82, .94));
+    var bg = C.bg.clone().lerp(C.white, endFade);
+    scene.background = bg;
+    BEAD.uBody.value.copy(bg);
+    sec.style.setProperty('--intro-bg', '#' + bg.getHexString());
+
+    var aOut = ease(seg(p, .14, .26));          // product hero leaves
+    var bIn = easeOut(seg(p, .14, .30));        // skin block rises into frame
+    var crack = ease(seg(p, .38, .47));         // surface cracks
+    var dmg = seg(p, .40, .57);                 // reservoir drains
+    var dIn = ease(seg(p, .57, .63));           // dropper arrives
+    var dOut = ease(seg(p, .74, .82));
+    var healR = lerp(0, 4.3, ease(seg(p, .665, .79)));   // ripple radius; cracks seal behind it
+    var rep = seg(p, .655, .80);                // reservoir refills
+    var healAll = ease(seg(p, .70, .80));
+    var eIn = ease(seg(p, .82, .96));           // product returns
+    var sink = ease(seg(p, .80, .91));          // block sinks away
+    var vis = bIn * (1 - sink);
+
+    /* block placement: rises from below the frame, sinks back out at the end */
+    block.position.set(side, lift - BELOW * (1 - bIn) - BELOW * sink, 0);
+    block.scale.setScalar(lerp(0.9, 1, bIn));
+    inner.rotation.y = -0.74 + p * 0.45 + (reduce ? 0 : Math.sin(idle * 0.00022) * 0.05);
+    block.visible = bIn > 0.001 && sink < 0.999;
+
+    /* plate: cells shrink about their centres (cracks open), tilt and lift; they heal behind the ripple,
+       which also runs through the surface as a gentle wave */
+    var dry = crack * (1 - healAll);
+    skinMat.color.copy(HEALTHY).lerp(DRY, dry);
+    skinMat.bumpScale = lerp(0.012, 0.03, dry);
+    skinMat.roughness = lerp(0.55, 0.85, dry);
+    skinMat.sheen = lerp(0.4, 0.1, dry);
+    skinMat.clearcoat = lerp(0.12, 0.01, dry);
+    underMat.color.copy(UNDER).lerp(INFLAMED, dry);
+    var waveAmp = 0.05 * clamp(healR / 0.3, 0, 1) * (1 - seg(healR, 3.4, 4.3));
+    tiles.forEach(function (t) {
+      var healT = clamp((healR - t.d + 0.35) / 0.7, 0, 1);
+      var c = crack * (1 - healT);
+      var s = 1 - (1 - t.sh) * c;
+      var dw = (healR - t.d) / 0.32;
+      t.m.scale.set(s, 1, s);
+      t.m.position.y = t.ly * c + waveAmp * Math.exp(-dw * dw);
+      t.m.rotation.set(t.rx * c, 0, t.rz * c);
+    });
+
+    /* reservoir: drains down and out from the bottom first, refills from the impact outward with a golden glow */
+    var wob = reduce ? 0 : 1;
+    for (var i = 0; i < NB; i++) {
+      var b = bubbles[i];
+      var u = clamp((dmg - b.dd) / 0.5, 0, 1), ue = u * u;
+      var v = clamp((rep - b.dr) / 0.4, 0, 1), ve = easeOut(v);
+      var away = ue * (1 - ve);
+      var px = lerp(lerp(b.h.x, b.t.x, ue), b.h.x, ve);
+      var py = lerp(lerp(b.h.y, b.t.y, ue), b.h.y, ve) + Math.sin(idle * 0.0011 + b.ph) * 0.018 * wob;
+      var pz = lerp(lerp(b.h.z, b.t.z, ue), b.h.z, ve);
+      // on the way back, swing in on a gentle arc
+      var arc = Math.sin(v * Math.PI) * 0.35;
+      px += -b.h.z * 0.12 * arc; pz += b.h.x * 0.12 * arc;
+      dummy.position.set(px, py, pz);
+      // water that is lost shrinks away as it leaves; what stays behind thins out
+      dummy.scale.setScalar(Math.max(1e-4, b.r * (b.lost ? 1 - away : 1 + (b.ss - 1) * away)));
+      dummy.updateMatrix();
+      var mesh = b.outer ? beadsOut : beadsIn;
+      mesh.setMatrixAt(b.slot, dummy.matrix);
+      tintC.copy(CLEAR).lerp(GOLD, clamp(0.1 + Math.sin(v * Math.PI) * 0.8 + ve * 0.12, 0, 1));
+      mesh.setColorAt(b.slot, tintC);
+    }
+    beadsOut.instanceMatrix.needsUpdate = true; beadsIn.instanceMatrix.needsUpdate = true;
+    beadsOut.instanceColor.needsUpdate = true; beadsIn.instanceColor.needsUpdate = true;
+
+    /* irritants settle into the cracks, then are pushed out as the ripple passes */
+    var inT = seg(p, .43, .56);
+    for (var j = 0; j < NI; j++) {
+      var it = irr[j];
+      var w = ease(clamp((inT - it.o) / 0.55, 0, 1));
+      var ex = clamp((healR - it.d + 0.2) / 0.8, 0, 1);
+      tmpA.copy(it.s).lerp(it.e, w);
+      tmpA.y += ex * 0.9;
+      dummy.position.copy(tmpA);
+      dummy.scale.setScalar(it.k * w * (1 - ex) + 0.0001);
+      dummy.updateMatrix();
+      irritants.setMatrixAt(j, dummy.matrix);
+    }
+    irritants.instanceMatrix.needsUpdate = true;
+
+    /* ripple rings */
+    var r1 = Math.min(healR, 2.75);
+    ring1.scale.set(2 * r1 + 0.001, 2 * r1 + 0.001, 1);
+    ring1.material.opacity = 0.7 * clamp(healR / 0.35, 0, 1) * (1 - clamp((healR - 1.9) / 0.85, 0, 1)) * vis;
+    var r2 = lerp(0, 2.75, ease(seg(p, .70, .80)));
+    ring2.scale.set(2 * r2 + 0.001, 2 * r2 + 0.001, 1);
+    ring2.material.opacity = 0.4 * clamp(r2 / 0.35, 0, 1) * (1 - clamp((r2 - 1.6) / 1.15, 0, 1)) * vis;
+    ring1.visible = ring1.material.opacity > 0.003; ring2.visible = ring2.material.opacity > 0.003;
+
+    /* camera: wide three-quarter view; pushes in on the cracks; pulls back for the repair */
+    block.updateMatrixWorld(true);
+    var impact = inner.localToWorld(tmpB.set(0, PLATE_T, 0)).clone();
+    var close = ease(seg(p, .38, .52)) * (1 - ease(seg(p, .60, .72)));
+    var el = 0.43;                               // camera elevation (rad)
+    var mB = bIn * (1 - eIn);                    // 0 = product framing, 1 = skin-block framing
+    var dist = lerp(mobile ? 26 : (wide ? 17.5 : 20), mobile ? 40 : (wide ? 17.5 : 22), mB);
+    var lookW = tmpA.set(side * 0.22, lerp(lift - 1.15 + (mobile ? 0.6 : 0), lift - 1.15 - (mobile ? 4.3 : 0), mB), 0);
+    var camW = tmpC.set(lookW.x, lookW.y + dist * Math.sin(el), dist * Math.cos(el));
+    var lookC = mobile ? V(impact.x, impact.y - 1.7, impact.z) : V(impact.x - 0.2, impact.y - 0.15, impact.z);
+    var camC = mobile ? V(impact.x, impact.y + 4.2, impact.z + 10.5) : V(impact.x + (wide ? -0.8 : 0), impact.y + 2.4, impact.z + 5.6);
+    var look = lookW.clone().lerp(lookC, close);
+    camera.position.copy(camW).lerp(camC, close);
+    camera.lookAt(look);
+
+    /* bottle */
+    var spin = reduce ? -0.12 : Math.sin(idle * 0.0006) * 0.32 - 0.1;
+    if (p < .5) {
+      var bs = lerp(1.6, 1.3, aOut);
+      bottle.position.set(lerp(side * 0.45, side + 1.5, aOut), lerp(lift - 1.35, offY, aOut), 1.4);
+      bottle.scale.setScalar(bs); bottle.rotation.set(0.06, spin, lerp(0, -0.25, aOut));
+    } else if (p < .82) {
+      // tilt over the block so the dropper tip hangs just above the impact point
+      bottle.position.set(0, 0, 0); bottle.scale.setScalar(1.0);
+      bottle.rotation.set(0.06, spin * 0.4, lerp(-0.25, -2.35, dIn));
+      bottle.updateMatrixWorld(true);
+      var tipNow = bottle.localToWorld(V(0, 1.45, 0));
+      var want = impact.clone().add(V(0.05, 1.35, 0.15));
+      var away2 = want.clone().add(V(2.2, offY - 0.5, 0));
+      var goal = away2.clone().lerp(want, dIn).lerp(away2, dOut);
+      bottle.position.copy(goal.sub(tipNow));
+    } else {
+      bottle.position.set(lerp(side + 1.5, side * 0.45, eIn), lerp(offY, lift - 1.25, eIn), 1.4);
+      bottle.scale.setScalar(lerp(1.0, 1.6, eIn)); bottle.rotation.set(0.06, spin, lerp(-2.35, 0, eIn));
+    }
+    bottle.visible = bottle.position.y < offY + 4;
+    floor.position.set(bottle.position.x, bottle.position.y - 1.1 * bottle.scale.x, 1.4);
+    floorMat.opacity = 0.12 * Math.max(1 - aOut, p > .82 ? eIn : 0);
+    floor.visible = floorMat.opacity > 0.002;
+
+    /* the drop: falls from the tip, lands, spreads and sinks in */
+    bottle.updateMatrixWorld(true);
+    var tip = bottle.localToWorld(V(0, 1.5, 0));
+    var fall = seg(p, .632, .665), splash = seg(p, .665, .70);
+    drop.visible = fall > 0 && splash < 1 && dIn > .95 && vis > .5;
+    if (drop.visible) {
+      if (fall < 1) {
+        drop.position.set(lerp(tip.x, impact.x, fall), lerp(tip.y, impact.y + 0.2, fall * fall), lerp(tip.z, impact.z, fall));
+        drop.scale.set(1, 1.25, 1);
+        dropMat.opacity = 1;
+      } else {
+        drop.position.set(impact.x, impact.y + 0.03, impact.z);
+        drop.scale.set(1 + 1.5 * splash, Math.max(0.15, 1.25 - 1.1 * splash), 1 + 1.5 * splash);
+        dropMat.opacity = 1 - seg(p, .675, .695);
+      }
+    }
+
+    showBeats(p);
+  }
+
+  // if this device can't keep up, render at a lower resolution rather than stutter
+  var lastT = 0, samples = 0, slow = 0;
+  function pace(time) {
+    if (lastT) {
+      var dt = time - lastT;
+      if (dt < 250) { samples++; if (dt > 28) slow++; }
+    }
+    lastT = time;
+    if (samples >= 45) {
+      if (slow > samples * 0.5 && pixelRatio > 1) {
+        pixelRatio = Math.max(1, pixelRatio - 0.5);
+        renderer.setPixelRatio(pixelRatio); resize();
+      }
+      samples = slow = 0;
+    }
+  }
+
+  var dirty = true, running = false;
+  function render(force) { if (force) dirty = true; }
+  function frame(time) {
+    if (!running) return;
+    target = progress();
+    var prev = shown;
+    shown += (target - shown) * (reduce ? 1 : 0.14);
+    if (Math.abs(target - shown) < 0.0004) shown = target;
+    if (dirty || shown !== prev || !reduce) {
+      apply(shown, time - t0);
+      renderer.render(scene, camera);
+      dirty = false;
+      pace(time);
+    }
+    requestAnimationFrame(frame);
+  }
+  function start() { if (!running) { running = true; lastT = 0; requestAnimationFrame(frame); } }
+  function stop() { running = false; }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: '100px' }).observe(sec);
+  } else start();
+  window.addEventListener('resize', resize);
+  resize();
+  // compile every shader up front (the block starts hidden), so nothing stalls mid-scroll
+  block.visible = true;
+  try { renderer.compile(scene, camera); } catch (e) { /* compiling lazily is fine too */ }
+  apply(progress(), 0); renderer.render(scene, camera);
+  shown = target = progress();
+  sec.classList.add('ready');
+  }
+})();
+{% endraw %}</script>
+{% schema %}
+{
+  "name": "Calme storefront",
+  "tag": "section",
+  "class": "calme-storefront",
+  "settings": [
+    { "type": "select", "id": "palette", "label": "Colour scheme", "default": "slate", "options": [ { "value": "slate", "label": "Slate clinic" }, { "value": "sage", "label": "Sage calm" }, { "value": "oat", "label": "Oat and clay" }, { "value": "dusk", "label": "Dusk lilac" }, { "value": "luxe", "label": "Quiet Luxury" }, { "value": "minimal", "label": "Modern Minimal" }, { "value": "editorial", "label": "Soft Editorial" } ] },
+    { "type": "text", "id": "intro_frames_url", "label": "Photoreal intro frames: the Shopify Files folder URL", "info": "Upload the calme-intro-*.webp files in Content > Files, copy one file's link and paste it here without the file name (it ends in /files/). Leave empty to use the live 3D intro." },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero image (wide product line-up). Leave empty to use the Barrier Reset Routine photo." },
+    { "type": "url", "id": "instagram", "label": "Instagram profile link" },
+    { "type": "url", "id": "tiktok", "label": "TikTok profile link" },
+    { "type": "url", "id": "facebook", "label": "Facebook page link" },
+    { "type": "checkbox", "id": "pixel_inspector", "label": "Show the pixel event inspector (for demos; turn off for real customers)", "default": false },
+    { "type": "checkbox", "id": "show_header", "label": "Show Calme header (turn off if the theme header is visible)", "default": false },
+    { "type": "checkbox", "id": "show_footer", "label": "Show Calme footer", "default": true },
+    { "type": "number", "id": "free_shipping", "label": "Free delivery threshold (S$)", "default": 60 },
+    { "type": "number", "id": "shipping_fee", "label": "Standard delivery fee (S$)", "default": 4.9 }
+  ],
+  "presets": [ { "name": "Calme storefront" } ]
+}
+{% endschema %}

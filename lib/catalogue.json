@@ -1,0 +1,323 @@
+[
+  {
+    "handle": "barrier-cleansing-oil",
+    "title": "Barrier Cleansing Oil",
+    "tags": [
+      "cleanse",
+      "step-1",
+      "oil-cleanser",
+      "core-routine",
+      "fragrance-free",
+      "eczema-prone",
+      "dry-skin"
+    ],
+    "image": "/img/barrier-cleansing-oil.webp",
+    "imageSm": "/img/barrier-cleansing-oil-sm.webp",
+    "short": "for removing sunscreen without stripping",
+    "ingredients": [
+      "Oat kernel oil to calm visible dryness",
+      "Squalane, a skin-identical lipid",
+      "Sunflower seed oil, rich in linoleic acid"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Evening. Massage 2 pumps onto dry skin for 60 seconds. Add lukewarm water to emulsify, then rinse. Follow with Gentle Cream Cleanser.",
+    "variants": [
+      {
+        "id": "CLM-OIL-150",
+        "title": "150 ml",
+        "price": 3200,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "cleanse",
+    "step": "Step 1 · Cleanse"
+  },
+  {
+    "handle": "gentle-cream-cleanser",
+    "title": "Gentle Cream Cleanser",
+    "tags": [
+      "cleanse",
+      "step-1",
+      "cream-cleanser",
+      "core-routine",
+      "fragrance-free",
+      "eczema-prone",
+      "sensitive-skin"
+    ],
+    "image": "/img/gentle-cream-cleanser.webp",
+    "imageSm": "/img/gentle-cream-cleanser-sm.webp",
+    "short": "for daily cleansing without tightness",
+    "ingredients": [
+      "Ceramides NP, AP and EOP",
+      "Glycerin for lasting hydration",
+      "Panthenol (pro-vitamin B5)"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Morning and evening. Massage onto damp skin with lukewarm water (not hot) for 30 to 60 seconds. Rinse and pat dry with a soft towel. Do not rub.",
+    "variants": [
+      {
+        "id": "CLM-CRM-200",
+        "title": "200 ml",
+        "price": 2800,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "cleanse",
+    "step": "Step 1 · Cleanse"
+  },
+  {
+    "handle": "ceramide-recovery-serum",
+    "title": "Ceramide Recovery Serum",
+    "tags": [
+      "treat",
+      "step-2",
+      "serum",
+      "core-routine",
+      "barrier-repair",
+      "fragrance-free",
+      "eczema-prone",
+      "bestseller"
+    ],
+    "image": "/img/ceramide-recovery-serum.webp",
+    "imageSm": "/img/ceramide-recovery-serum-sm.webp",
+    "short": "for a dry, damaged skin barrier",
+    "ingredients": [
+      "Ceramides NP, AP and EOP",
+      "Cholesterol and free fatty acids (3:1:1)",
+      "Niacinamide 2%, gentle enough for reactive skin"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Morning and evening. Press 3 to 4 drops into damp skin after cleansing, then moisturise straight away.",
+    "variants": [
+      {
+        "id": "CLM-CER-30",
+        "title": "30 ml",
+        "price": 4600,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "treat",
+    "step": "Step 2 · Treat"
+  },
+  {
+    "handle": "centella-calming-serum",
+    "title": "Centella Calming Serum",
+    "tags": [
+      "treat",
+      "step-2",
+      "serum",
+      "flare-up-care",
+      "soothing",
+      "fragrance-free",
+      "eczema-prone",
+      "redness"
+    ],
+    "image": "/img/centella-calming-serum.webp",
+    "imageSm": "/img/centella-calming-serum-sm.webp",
+    "short": "for visible redness and heat",
+    "ingredients": [
+      "Centella asiatica and madecassoside",
+      "Panthenol 5%",
+      "Beta-glucan from oats"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Morning and evening, or whenever skin feels uncomfortable. Pat 3 to 4 drops onto clean skin. Keep it in the fridge for extra cooling.",
+    "variants": [
+      {
+        "id": "CLM-CEN-30",
+        "title": "30 ml",
+        "price": 4200,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "treat",
+    "step": "Step 2 · Treat"
+  },
+  {
+    "handle": "pha-gentle-exfoliant",
+    "title": "PHA Gentle Exfoliant",
+    "tags": [
+      "treat",
+      "step-2",
+      "acids",
+      "advanced",
+      "exfoliant",
+      "fragrance-free",
+      "sensitive-skin",
+      "texture"
+    ],
+    "image": "/img/pha-gentle-exfoliant.webp",
+    "imageSm": "/img/pha-gentle-exfoliant-sm.webp",
+    "short": "for rough, flaky texture",
+    "ingredients": [
+      "Gluconolactone 5% (PHA)",
+      "Lactobionic acid 2% (PHA)",
+      "Allantoin to comfort skin"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Evening, 2 to 3 times a week, only when skin is calm (no active flare). Sweep over clean, dry skin with a cotton pad. Never use on the same night as Night Renew Retinol. Use SPF the next morning.",
+    "variants": [
+      {
+        "id": "CLM-PHA-100",
+        "title": "100 ml",
+        "price": 3800,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "treat",
+    "step": "Step 2 · Treat"
+  },
+  {
+    "handle": "night-renew-retinol",
+    "title": "Night Renew Retinol 0.1%",
+    "tags": [
+      "treat",
+      "step-2",
+      "retinol",
+      "advanced",
+      "night",
+      "fragrance-free",
+      "sensitive-skin",
+      "anti-ageing"
+    ],
+    "image": "/img/night-renew-retinol.webp",
+    "imageSm": "/img/night-renew-retinol-sm.webp",
+    "short": "for texture and fine lines",
+    "ingredients": [
+      "Encapsulated retinol 0.1%",
+      "Bakuchiol",
+      "Ceramide NP and squalane as a buffer"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Evening, twice a week to start, only when skin is calm. Apply a pea-size amount after serum and before moisturiser. Never on the same night as PHA Gentle Exfoliant. Use SPF daily. Not for use during pregnancy.",
+    "variants": [
+      {
+        "id": "CLM-RET-30",
+        "title": "30 ml",
+        "price": 5200,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "treat",
+    "step": "Step 2 · Treat"
+  },
+  {
+    "handle": "barrier-repair-cream",
+    "title": "Barrier Repair Cream",
+    "tags": [
+      "moisturise",
+      "step-3",
+      "moisturiser",
+      "core-routine",
+      "barrier-repair",
+      "fragrance-free",
+      "eczema-prone",
+      "bestseller"
+    ],
+    "image": "/img/barrier-repair-cream-50ml.webp",
+    "imageSm": "/img/barrier-repair-cream-50ml-sm.webp",
+    "short": "for dry, itchy-feeling skin",
+    "ingredients": [
+      "Colloidal oatmeal 1%",
+      "Ceramides NP, AP and EOP",
+      "Shea butter and squalane"
+    ],
+    "listTitle": "Key ingredients",
+    "how": "Morning and evening, within 3 minutes of cleansing while skin is still damp (soak and seal). Smooth over face and any dry patches on the body.",
+    "variants": [
+      {
+        "id": "CLM-BRC-50",
+        "title": "50 ml",
+        "price": 3800,
+        "compare": 0,
+        "available": true,
+        "image": "/img/barrier-repair-cream-50ml.webp"
+      },
+      {
+        "id": "CLM-BRC-100",
+        "title": "100 ml",
+        "price": 6400,
+        "compare": 0,
+        "available": true,
+        "image": "/img/barrier-repair-cream-100ml.webp"
+      }
+    ],
+    "category": "moisturise",
+    "step": "Step 3 · Moisturise"
+  },
+  {
+    "handle": "barrier-reset-routine",
+    "title": "Barrier Reset Routine",
+    "tags": [
+      "bundle",
+      "routine",
+      "core-routine",
+      "eczema-prone",
+      "bestseller",
+      "gift"
+    ],
+    "image": "/img/barrier-reset-routine.webp",
+    "imageSm": "/img/barrier-reset-routine-sm.webp",
+    "short": "for a complete barrier reset",
+    "ingredients": [
+      "Barrier Cleansing Oil 150 ml",
+      "Gentle Cream Cleanser 200 ml",
+      "Ceramide Recovery Serum 30 ml",
+      "Barrier Repair Cream 50 ml"
+    ],
+    "listTitle": "What's inside",
+    "how": "Evening: oil cleanse, cream cleanse, serum, cream. Morning: cream cleanse, serum, cream, then sunscreen. See our step-by-step routine guide.",
+    "variants": [
+      {
+        "id": "CLM-SET-RESET",
+        "title": "4-piece set",
+        "price": 12800,
+        "compare": 14400,
+        "available": true
+      }
+    ],
+    "category": "sets",
+    "step": "Full routine"
+  },
+  {
+    "handle": "discovery-kit",
+    "title": "Discovery Kit",
+    "tags": [
+      "trial",
+      "discovery",
+      "minis",
+      "eczema-prone",
+      "entry",
+      "gift"
+    ],
+    "image": "/img/discovery-kit.webp",
+    "imageSm": "/img/discovery-kit-sm.webp",
+    "short": "for trying the routine first",
+    "ingredients": [
+      "Barrier Cleansing Oil 20 ml",
+      "Gentle Cream Cleanser 30 ml",
+      "Ceramide Recovery Serum 5 ml",
+      "Centella Calming Serum 5 ml",
+      "Barrier Repair Cream 15 ml"
+    ],
+    "listTitle": "What's inside",
+    "how": "Order the kit, use it for 14 days, then use the code in your parcel on any full-size product. Limit one kit per customer.",
+    "variants": [
+      {
+        "id": "CLM-KIT-DISC",
+        "title": "5 minis",
+        "price": 1900,
+        "compare": 0,
+        "available": true
+      }
+    ],
+    "category": "sets",
+    "step": "Try first"
+  }
+]
