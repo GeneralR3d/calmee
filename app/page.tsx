@@ -5,6 +5,7 @@ import { FeaturedProducts } from '@/components/featured-products';
 import { ScienceSection } from '@/components/science-section';
 import { RoutineFinder } from '@/components/routine-finder';
 import { PromiseSection } from '@/components/promise-section';
+import { ReviewsSection } from '@/components/reviews-section';
 import { FaqSection } from '@/components/faq-section';
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -17,5 +18,5 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     }
     redirect(`/products/${params.p}${rest.size ? `?${rest}` : ''}`);
   }
-  return <><Hero /><FeaturedProducts /><ScienceSection /><RoutineFinder /><PromiseSection /><FaqSection /></>;
+  return <><Hero /><FeaturedProducts /><ScienceSection /><RoutineFinder /><PromiseSection /><ReviewsSection /><FaqSection /></>;
 }
