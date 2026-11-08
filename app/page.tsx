@@ -7,6 +7,7 @@ import { RoutineFinder } from '@/components/routine-finder';
 import { PromiseSection } from '@/components/promise-section';
 import { ReviewsSection } from '@/components/reviews-section';
 import { FaqSection } from '@/components/faq-section';
+import { DiscoveryPopup } from '@/components/discovery-popup';
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
@@ -18,5 +19,5 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     }
     redirect(`/products/${params.p}${rest.size ? `?${rest}` : ''}`);
   }
-  return <><Hero /><FeaturedProducts /><ScienceSection /><RoutineFinder /><PromiseSection /><ReviewsSection /><FaqSection /></>;
+  return <><Hero /><FeaturedProducts /><ScienceSection /><RoutineFinder /><PromiseSection /><ReviewsSection /><FaqSection /><DiscoveryPopup /></>;
 }

@@ -53,6 +53,8 @@ Campaign links may include `?discount=CALMEIG` or `?code=WELCOME10`. Valid codes
 
 Checkout simulates PayNow or bank transfer. No real payment, email, shipment, or Shopify order is created. Customer form fields remain in the page's memory and are not submitted to a service. Newsletter signup likewise displays a demo confirmation.
 
+The homepage offers a free Discovery Kit in an email-signup popup after 10 seconds. It appears once per browser, recorded by `calme-discovery-offer-seen` in local storage, and waits for any open dialog to close. Visitors can dismiss it with Escape, the close button, the decline button, or the backdrop. Signup validates the email and displays a demo confirmation; it does not store or transmit the email, reserve a kit, or issue a discount. The popup can appear again if browser storage is cleared or blocked.
+
 ## Customisation
 
 - `app/globals.css` contains the original stylesheet followed by the additions needed for full-page product, cart, checkout, and blog layouts. It retains the original `.calme` design tokens and all seven palettes. The support dock keeps the colour picker and WhatsApp control clear of cookie banners and cart messages.
