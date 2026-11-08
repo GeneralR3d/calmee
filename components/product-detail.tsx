@@ -7,6 +7,7 @@ import { money } from '@/lib/cart';
 import { emit, productEvent } from '@/lib/analytics';
 import { useStore } from './store-provider';
 import { QuantityControl } from './quantity-control';
+import { ProductPageGuide } from './product-page-guide';
 
 export function ProductDetail({ product: p }: { product: Product }) {
   const [variantIndex, setVariantIndex] = useState(0);
@@ -36,5 +37,6 @@ export function ProductDetail({ product: p }: { product: Product }) {
         <div className="qv-links"><Link href="/products">Explore the range</Link><button className="link-btn" type="button" onClick={share}>Share this product</button></div>
       </div>
     </div>
+    <ProductPageGuide />
   </div></section>;
 }

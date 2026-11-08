@@ -1,0 +1,23 @@
+.guide {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+  border-top: 1px solid var(--hair);
+  padding-top: 16px;
+  color: var(--mute);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.guide h2 {
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.guide a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
