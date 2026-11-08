@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useStore } from './store-provider';
 
-const links = [ ['Products', '/products'], ['Blog', '/blog'], ['Routine Finder', '/#c-routine'], ['Science', '/#c-science'], ['Support', '/#c-faq'] ];
+const links = [ ['Products', '/products'], ['Blog', '/blog'], ['Routine Finder', '/#c-routine'], ['Science', '/#c-science'], ['Support', '/#c-faq'], ['Sitemap', '/sitemap'] ];
 export function Header() {
   const pathname = usePathname();
   const { count, analytics } = useStore();

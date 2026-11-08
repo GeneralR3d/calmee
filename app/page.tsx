@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import { products } from '@/lib/products';
-import { Intro } from '@/components/intro';
 import { Hero } from '@/components/hero';
 import { FeaturedProducts } from '@/components/featured-products';
 import { ScienceSection } from '@/components/science-section';
@@ -18,5 +17,5 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     }
     redirect(`/products/${params.p}${rest.size ? `?${rest}` : ''}`);
   }
-  return <><Intro /><Hero /><FeaturedProducts /><ScienceSection /><RoutineFinder /><PromiseSection /><FaqSection /></>;
+  return <><Hero /><FeaturedProducts /><ScienceSection /><RoutineFinder /><PromiseSection /><FaqSection /></>;
 }

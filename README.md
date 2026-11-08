@@ -1,6 +1,6 @@
 # Calme storefront
 
-A Next.js and React storefront for Calme skincare, migrated from the original standalone page while keeping its colours, typography, imagery, responsive styling, and scroll-driven introduction.
+A Next.js and React storefront for Calme skincare, migrated from the original standalone page while keeping its colours, typography, imagery, responsive styling, and product-focused introduction.
 
 ## Run locally
 
@@ -29,11 +29,12 @@ npm start
 
 ## Pages
 
-- `/` — original intro, hero, featured products, science, Routine Finder, brand promises, and FAQs.
+- `/` — product-focused opening, featured products, science, Routine Finder, brand promises, and FAQs.
 - `/products` — all nine products, with step and skin-concern filters and search.
 - `/products/[handle]` — product details, ingredients, usage, size selection, and add-to-bag controls. Example: `/products/barrier-repair-cream`.
 - `/blog` — journal listing.
 - `/blog/welcome-to-calme` — the initial placeholder article.
+- `/sitemap` — visitor directory of shopping, learning, and support links.
 - `/cart` — persistent bag, quantities, removal, and delivery progress.
 - `/checkout` — demo checkout and simulated order confirmation.
 
@@ -54,14 +55,14 @@ Checkout simulates PayNow or bank transfer. No real payment, email, shipment, or
 
 ## Customisation
 
-- `app/globals.css` contains the original stylesheet followed by the additions needed for full-page product, cart, checkout, and blog layouts. It retains the original `.calme` design tokens and all seven palettes.
+- `app/globals.css` contains the original stylesheet followed by the additions needed for full-page product, cart, checkout, and blog layouts. It retains the original `.calme` design tokens and all seven palettes. The support dock keeps the colour picker and WhatsApp control clear of cookie banners and cart messages.
 - `lib/catalogue.json` contains the nine original products and ten variants, with prices in cents and root-relative image paths.
-- `lib/routines.ts` retains the original four routine recommendations.
+- `lib/routines.ts` contains four cosmetic skincare routines, including the delicate-skin choice.
 - `lib/blog.ts` contains the placeholder post. Add another entry to create another journal route.
-- `lib/config.ts` controls the default palette, colour picker, social links, and optional advertising pixel IDs.
+- `lib/config.ts` controls the default palette, colour picker, social links, optional advertising pixel IDs, and `whatsappUrl`. Leave `whatsappUrl` empty for the local demo contact action, or set an HTTPS `https://wa.me/` business link to enable external contact.
 - `public/img/` and `public/intro-frames/` contain unchanged copies of the original assets. All 160 desktop and 80 mobile intro frames are included.
 
-The intro uses the original frame renderer, with cleanup on navigation. If frames fail, it tries the original Three.js r147 scene from jsDelivr; if WebGL or that script is unavailable, it displays the static story. Google Fonts loads Inter while retaining the original system-font fallbacks.
+The homepage opens with “Gentle skincare for delicate skin.” and the existing product imagery. The original intro frames and animation source remain unused references; the live site does not load them or Three.js. Google Fonts loads Inter while retaining the original system-font fallbacks.
 
 Cookie choices and palette selection retain the original storage keys. Meta, TikTok, GA4, and Pinterest pixels remain unconfigured and only load after consent when IDs are provided. Add `?pixeldebug=1` to inspect storefront events. Simulated purchases are never sent to advertising platforms. Do not put private tokens into client configuration.
 
@@ -91,7 +92,7 @@ If Google Chrome is already installed, use it instead:
 PLAYWRIGHT_CHANNEL=chrome npm run test:e2e
 ```
 
-The browser suite starts a local development preview automatically, or uses an existing preview on port 3000. It covers navigation, product variants, all product URLs, cart persistence, discounts, form validation, simulated orders, the Routine Finder, palette persistence, mobile navigation, privacy controls, and intro fallback.
+The browser suite starts a local development preview automatically, or uses an existing preview on port 3000. It covers navigation, product variants, all product URLs, cart persistence, discounts, form validation, simulated orders, the Routine Finder, palette persistence, mobile navigation, privacy controls, the product-focused opening, sitemap destinations, and WhatsApp demo interactions.
 
 ## Original storefront kit
 

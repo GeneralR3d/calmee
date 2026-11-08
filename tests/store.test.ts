@@ -12,7 +12,7 @@ describe('original catalogue', () => {
   it('combines step, concern and case-insensitive search', () => {
     expect(filterProducts('cleanse', 'any', '')).toHaveLength(2);
     expect(filterProducts('sets', 'any', '')).toHaveLength(2);
-    expect(filterProducts('treat', 'flare', 'CENTELLA').map(p => p.handle)).toEqual(['centella-calming-serum']);
+    expect(filterProducts('treat', 'delicate', 'CENTELLA').map(p => p.handle)).toEqual(['centella-calming-serum']);
     expect(filterProducts('all', 'any', 'no matching product')).toEqual([]);
   });
 });

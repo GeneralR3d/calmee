@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { addItems, cartLines, changeQuantity, sanitiseCart, totals, type CartItem } from '@/lib/cart';
 import { config } from '@/lib/config';
 import { byVariant } from '@/lib/products';
 import { emit, getAnalytics, productEvent } from '@/lib/analytics';
 import { readStorage, writeStorage } from '@/lib/storage';
+import { WhatsAppSupport } from './whatsapp-support';
 
 type Consent = 'all' | 'necessary' | null;
 type AnalyticsState = { consent: Consent; askConsent: boolean; showInspector: boolean; linkCode: string; campaign: Record<string, string>; log: { name: string; status: string }[] };
@@ -21,7 +22,7 @@ type Store = {
 };
 const StoreContext = createContext<Store | null>(null);
 export const palettes = [
-  { key: 'slate', name: 'Slate', title: 'Slate clinic', colors: ['#7FA3C9', '#2F5C8A'] },
+  { key: 'slate', name: 'Slate', title: 'Slate blue', colors: ['#7FA3C9', '#2F5C8A'] },
   { key: 'sage', name: 'Sage', title: 'Sage calm', colors: ['#82AD96', '#3E6B5A'] },
   { key: 'oat', name: 'Oat', title: 'Oat and clay', colors: ['#C99A72', '#8E5338'] },
   { key: 'dusk', name: 'Dusk', title: 'Dusk lilac', colors: ['#8F94CF', '#4F5596'] },
@@ -42,6 +43,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [notification, setNotification] = useState<{ message: string; viewBag: boolean } | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const privacy = useRef<HTMLDialogElement>(null);
+  const consentBanner = useRef<HTMLDivElement>(null);
+  const toastElement = useRef<HTMLDivElement>(null);
+  const [supportClearance, setSupportClearance] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -92,17 +96,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const selectedPalette = palettes.find(p => p.key === palette) || palettes[0];
   const gradient = (colors: string[]) => `linear-gradient(90deg,${colors[0]} 50%,${colors[1]} 50%)`;
   const chooseConsent = (value: 'all' | 'necessary') => { getAnalytics()?.setConsent(value); setCookieOpen(false); };
+  const consentVisible = cookieOpen || (analytics.askConsent && !analytics.consent);
+
+  useEffect(() => {
+    const overlays = [consentVisible ? consentBanner.current : null, notification ? toastElement.current : null].filter((element): element is HTMLDivElement => !!element);
+    const measure = () => setSupportClearance(Math.max(0, ...overlays.map(element => element.offsetHeight + parseFloat(getComputedStyle(element).bottom) + 12)));
+    measure();
+    const observer = new ResizeObserver(measure);
+    overlays.forEach(element => observer.observe(element));
+    window.addEventListener('resize', measure);
+    return () => { observer.disconnect(); window.removeEventListener('resize', measure); };
+  }, [consentVisible, notification]);
 
   return <StoreContext.Provider value={{ items, ready, count, add, update, clear, toast, palette, setPalette: setPaletteState, analytics, openCookies: () => setCookieOpen(true), openPrivacy: () => privacy.current?.showModal() }}>
     <div className="calme" id="calme" data-palette={palette}>
       {children}
+      <div className="support-dock" style={{ '--support-clearance': `${supportClearance}px` } as CSSProperties}>
       {config.paletteSwitcher && <aside className={`palette${paletteOpen ? ' open' : ''}`} aria-label="Colour scheme demo">
         <button className="pal-toggle" aria-label="Try a colour scheme" aria-expanded={paletteOpen} aria-controls="c-pal-opts" onClick={() => setPaletteOpen(!paletteOpen)}><i style={{ background: gradient(selectedPalette.colors) }} /><span>Colours</span></button>
         <div className="pal-opts" id="c-pal-opts" role="group" aria-label="Colour schemes" inert={!paletteOpen}>
           {palettes.map(p => <button key={p.key} title={p.title} aria-label={p.title} aria-pressed={palette === p.key} onClick={() => { setPaletteState(p.key); setPaletteOpen(false); }}><i style={{ background: gradient(p.colors) }} /><span>{p.name}</span></button>)}
         </div>
       </aside>}
-      {(cookieOpen || (analytics.askConsent && !analytics.consent)) && <div className="consent" role="region" aria-label="Cookie choices">
+      <WhatsAppSupport />
+      </div>
+      {consentVisible && <div ref={consentBanner} className="consent" role="region" aria-label="Cookie choices">
         <p>We use cookies to keep your bag and, with your permission, to measure our ads on Instagram, Facebook and TikTok. <PrivacyButton>Privacy notice</PrivacyButton></p>
         <div className="consent-btns"><button className="pill sm" onClick={() => chooseConsent('necessary')}>Necessary only</button><button className="pill solid sm" onClick={() => chooseConsent('all')}>Accept all</button></div>
       </div>}
@@ -117,7 +135,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         </div>
       </dialog>
       {analytics.showInspector && <aside className="px" aria-label="Pixel event inspector"><button className="px-toggle" aria-expanded={inspectorOpen} onClick={() => setInspectorOpen(!inspectorOpen)}><b>Pixel events</b> <span>{analytics.log.length}</span></button>{inspectorOpen && <div className="px-log"><p className="px-head">What this page sends to ad platforms.</p><ol>{analytics.log.map((event, index) => <li key={index}><b>{event.name}</b><span className="px-st">{event.status}</span></li>)}</ol></div>}</aside>}
-      <div className={`toast${notification ? ' on' : ''}`} role="status" aria-live="polite"><span>{notification?.message}</span>{notification?.viewBag && <Link href="/cart" onClick={() => setNotification(null)}>View bag</Link>}</div>
+      <div ref={toastElement} className={`toast${notification ? ' on' : ''}`} role="status" aria-live="polite"><span>{notification?.message}</span>{notification?.viewBag && <Link href="/cart" onClick={() => setNotification(null)}>View bag</Link>}</div>
     </div>
   </StoreContext.Provider>;
 }

@@ -9,7 +9,7 @@ import { emit } from '@/lib/analytics';
 import { useStore } from './store-provider';
 
 const options: { key: RoutineKey; title: string; text: string }[] = [
-  { key: 'flare', title: 'Flaring now', text: 'Hot, red, itchy or tight patches.' },
+  { key: 'delicate', title: 'Delicate skin', text: 'A simple routine for everyday comfort.' },
   { key: 'dry', title: 'Dry and tight', text: 'Uncomfortable after washing.' },
   { key: 'texture', title: 'Calm, but rough', text: 'Ready for a gentle acid or retinol.' },
   { key: 'new', title: 'Just curious', text: 'Try before you commit.' },

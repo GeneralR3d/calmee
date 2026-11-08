@@ -4,7 +4,7 @@ export function FeaturedProducts() { return (
 <section className="tiles" aria-label="Featured products">
   <div className="tile">
     <h2>Ceramide Recovery Serum</h2>
-    <p className="sub">Rebuild what your barrier is missing.</p>
+    <p className="sub">Daily hydration for a softer skin feel.</p>
     <div className="cta-row"><AddToBag className="pill solid sm" handle="ceramide-recovery-serum">Buy</AddToBag><Link className="pill sm" href="/products/ceramide-recovery-serum">Learn more</Link></div>
     <img src="/img/ceramide-recovery-serum.webp" loading="lazy" decoding="async" width="800" height="800" alt="Ceramide Recovery Serum glass dropper bottle" />
   </div>
@@ -17,13 +17,13 @@ export function FeaturedProducts() { return (
   </div>
   <div className="tile">
     <h2>Barrier Repair Cream</h2>
-    <p className="sub">Seal it in, within three minutes.</p>
+    <p className="sub">Rich moisture for dry-feeling skin.</p>
     <div className="cta-row"><Link className="pill solid sm" href="/products/barrier-repair-cream">Buy</Link><Link className="pill sm" href="/products/barrier-repair-cream">Learn more</Link></div>
     <img src="/img/barrier-repair-cream-50ml.webp" loading="lazy" decoding="async" width="800" height="800" alt="Barrier Repair Cream jar" />
   </div>
   <div className="tile">
     <h2>Centella Calming Serum</h2>
-    <p className="sub">For the hot, red days.</p>
+    <p className="sub">Everyday comfort for delicate skin.</p>
     <div className="cta-row"><AddToBag className="pill solid sm" handle="centella-calming-serum">Buy</AddToBag><Link className="pill sm" href="/products/centella-calming-serum">Learn more</Link></div>
     <img src="/img/centella-calming-serum.webp" loading="lazy" decoding="async" width="800" height="800" alt="Centella Calming Serum glass dropper bottle" />
   </div>

@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
   const p = products.find(product => product.handle === handle);
   if (!p) return { title: 'Product not found' };
-  return { title: p.title, description: `${p.title}: ${p.short}. Fragrance-free skincare from Calme.`, openGraph: { title: `${p.title} | Calme`, description: p.short, images: [{ url: p.image, alt: p.title }] } };
+  return { title: p.title, description: `${p.title}: ${p.short}. Gentle skincare for delicate skin. Fragrance-free care from Calme.`, openGraph: { title: `${p.title} | Calme`, description: p.short, images: [{ url: p.image, alt: p.title }] } };
 }
 export default async function ProductPage({ params }: Props) {
   const { handle } = await params;

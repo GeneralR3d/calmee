@@ -8,7 +8,7 @@
       "oil-cleanser",
       "core-routine",
       "fragrance-free",
-      "eczema-prone",
+      "delicate-skin",
       "dry-skin"
     ],
     "image": "/img/barrier-cleansing-oil.webp",
@@ -42,7 +42,7 @@
       "cream-cleanser",
       "core-routine",
       "fragrance-free",
-      "eczema-prone",
+      "delicate-skin",
       "sensitive-skin"
     ],
     "image": "/img/gentle-cream-cleanser.webp",
@@ -77,12 +77,12 @@
       "core-routine",
       "barrier-repair",
       "fragrance-free",
-      "eczema-prone",
+      "delicate-skin",
       "bestseller"
     ],
     "image": "/img/ceramide-recovery-serum.webp",
     "imageSm": "/img/ceramide-recovery-serum-sm.webp",
-    "short": "for a dry, damaged skin barrier",
+    "short": "for hydration and a softer skin feel",
     "ingredients": [
       "Ceramides NP, AP and EOP",
       "Cholesterol and free fatty acids (3:1:1)",
@@ -100,7 +100,7 @@
       }
     ],
     "category": "treat",
-    "step": "Step 2 · Treat"
+    "step": "Step 2 · Care"
   },
   {
     "handle": "centella-calming-serum",
@@ -109,15 +109,15 @@
       "treat",
       "step-2",
       "serum",
-      "flare-up-care",
+      "delicate-care",
       "soothing",
       "fragrance-free",
-      "eczema-prone",
+      "delicate-skin",
       "redness"
     ],
     "image": "/img/centella-calming-serum.webp",
     "imageSm": "/img/centella-calming-serum-sm.webp",
-    "short": "for visible redness and heat",
+    "short": "for hydration and everyday comfort",
     "ingredients": [
       "Centella asiatica and madecassoside",
       "Panthenol 5%",
@@ -135,7 +135,7 @@
       }
     ],
     "category": "treat",
-    "step": "Step 2 · Treat"
+    "step": "Step 2 · Care"
   },
   {
     "handle": "pha-gentle-exfoliant",
@@ -159,7 +159,7 @@
       "Allantoin to comfort skin"
     ],
     "listTitle": "Key ingredients",
-    "how": "Evening, 2 to 3 times a week, only when skin is calm (no active flare). Sweep over clean, dry skin with a cotton pad. Never use on the same night as Night Renew Retinol. Use SPF the next morning.",
+    "how": "Evening, 2 to 3 times a week, only when skin is calm and comfortable. Sweep over clean, dry skin with a cotton pad. Never use on the same night as Night Renew Retinol. Use SPF the next morning.",
     "variants": [
       {
         "id": "CLM-PHA-100",
@@ -170,7 +170,7 @@
       }
     ],
     "category": "treat",
-    "step": "Step 2 · Treat"
+    "step": "Step 2 · Care"
   },
   {
     "handle": "night-renew-retinol",
@@ -205,7 +205,7 @@
       }
     ],
     "category": "treat",
-    "step": "Step 2 · Treat"
+    "step": "Step 2 · Care"
   },
   {
     "handle": "barrier-repair-cream",
@@ -217,19 +217,19 @@
       "core-routine",
       "barrier-repair",
       "fragrance-free",
-      "eczema-prone",
+      "delicate-skin",
       "bestseller"
     ],
     "image": "/img/barrier-repair-cream-50ml.webp",
     "imageSm": "/img/barrier-repair-cream-50ml-sm.webp",
-    "short": "for dry, itchy-feeling skin",
+    "short": "for dry-feeling, delicate skin",
     "ingredients": [
       "Colloidal oatmeal 1%",
       "Ceramides NP, AP and EOP",
       "Shea butter and squalane"
     ],
     "listTitle": "Key ingredients",
-    "how": "Morning and evening, within 3 minutes of cleansing while skin is still damp (soak and seal). Smooth over face and any dry patches on the body.",
+    "how": "Morning and evening, within 3 minutes of cleansing while skin is still damp. Smooth over face and any dry patches on the body.",
     "variants": [
       {
         "id": "CLM-BRC-50",
@@ -258,13 +258,13 @@
       "bundle",
       "routine",
       "core-routine",
-      "eczema-prone",
+      "delicate-skin",
       "bestseller",
       "gift"
     ],
     "image": "/img/barrier-reset-routine.webp",
     "imageSm": "/img/barrier-reset-routine-sm.webp",
-    "short": "for a complete barrier reset",
+    "short": "for a complete daily skincare routine",
     "ingredients": [
       "Barrier Cleansing Oil 150 ml",
       "Gentle Cream Cleanser 200 ml",
@@ -292,7 +292,7 @@
       "trial",
       "discovery",
       "minis",
-      "eczema-prone",
+      "delicate-skin",
       "entry",
       "gift"
     ],

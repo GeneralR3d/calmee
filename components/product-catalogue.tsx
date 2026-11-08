@@ -8,8 +8,8 @@ import { money } from '@/lib/cart';
 import { emit } from '@/lib/analytics';
 import { AddToBag } from './store-provider';
 
-const categories = [['all', 'All'], ['cleanse', 'Cleanse'], ['treat', 'Treat'], ['moisturise', 'Moisturise'], ['sets', 'Sets']];
-const concerns: [Concern, string][] = [['any', 'Any'], ['flare', 'Flare-ups & redness'], ['dry', 'Dryness & tightness'], ['texture', 'Rough texture']];
+const categories = [['all', 'All'], ['cleanse', 'Cleanse'], ['treat', 'Care'], ['moisturise', 'Moisturise'], ['sets', 'Sets']];
+const concerns: [Concern, string][] = [['any', 'Any'], ['delicate', 'Delicate skin'], ['dry', 'Dryness & tightness'], ['texture', 'Rough texture']];
 export function ProductCard({ product: p }: { product: Product }) {
   const prices = p.variants.map(v => v.price);
   const low = Math.min(...prices);

@@ -1,14 +1,14 @@
 import catalogue from './catalogue.json';
 
 export type Category = 'cleanse' | 'treat' | 'moisturise' | 'sets' | 'other';
-export type Concern = 'any' | 'flare' | 'dry' | 'texture';
+export type Concern = 'any' | 'delicate' | 'dry' | 'texture';
 export type Variant = { id: string; title: string; price: number; compare: number; available: boolean; image?: string };
 export type Product = { handle: string; title: string; tags: string[]; category: Category; step: string; image: string; imageSm: string; short: string; ingredients: string[]; listTitle: string; how: string; variants: Variant[] };
 export const products = catalogue as Product[];
 export const byHandle = Object.fromEntries(products.map(p => [p.handle, p]));
 export const byVariant = Object.fromEntries(products.flatMap(product => product.variants.map(variant => [variant.id, { product, variant }])));
 const concerns: Record<Concern, string[]> = {
-  any: [], flare: ['flare-up-care', 'soothing', 'barrier-repair', 'redness'],
+  any: [], delicate: ['delicate-skin', 'soothing'],
   dry: ['barrier-repair', 'dry-skin', 'moisturise', 'oil-cleanser', 'cream-cleanser'],
   texture: ['advanced', 'texture', 'exfoliant'],
 };
