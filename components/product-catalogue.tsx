@@ -7,6 +7,7 @@ import { badgeOf, filterProducts, type Concern, type Product } from '@/lib/produ
 import { money } from '@/lib/cart';
 import { emit } from '@/lib/analytics';
 import { AddToBag } from './store-provider';
+import { ProductPageGuide } from './product-page-guide';
 
 const categories = [['all', 'All'], ['cleanse', 'Cleanse'], ['treat', 'Care'], ['moisturise', 'Moisturise'], ['sets', 'Sets']];
 const concerns: [Concern, string][] = [['any', 'Any'], ['delicate', 'Delicate skin'], ['dry', 'Dryness & tightness'], ['texture', 'Rough texture']];
@@ -43,5 +44,6 @@ export function ProductCatalogue() {
       <label className="search" htmlFor="c-q"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg><span className="sr">Search products</span><input ref={input} id="c-q" type="search" placeholder="Search ceramide, retinol, cleanser" value={query} onChange={event => setQuery(event.target.value)} /></label>
     </div>
     <div className="grid" aria-live="polite">{products.length ? products.map(p => <ProductCard key={p.handle} product={p} />) : <p className="empty">No products match these filters. Try “All” or another skin concern.</p>}</div>
+    <ProductPageGuide />
   </div></section>;
 }
