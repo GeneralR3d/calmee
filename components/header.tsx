@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useStore } from './store-provider';
@@ -19,7 +20,7 @@ export function Header() {
   return <>
     <aside className="ribbon" aria-label="Offers"><p className="wrap">{analytics.linkCode ? <>Code <b>{analytics.linkCode}</b> is saved and will be applied at checkout. Free delivery over S$60.</> : <>Free delivery on orders over S$60. Try the Discovery Kit for S$19 and get S$19 back. <Link href="/products/discovery-kit">Shop the kit</Link></>}</p></aside>
     <header className="hdr"><div className="wrap hdr-in">
-      <Link className="logo" href="/" aria-label="Calme home" onClick={() => setOpen(false)}>CALME</Link>
+      <Link className="logo" href="/" aria-label="Le Calme home" onClick={() => setOpen(false)}><Image className="logo-mark" src="/logo-mark.webp" width={36} height={25} alt="" /><span>Le Calme</span></Link>
       <nav className={`nav${open ? ' open' : ''}`} id="c-nav" aria-label="Main">{links.map(([label, href]) => <Link key={href} href={href} aria-current={href === pathname ? 'page' : undefined} onClick={() => setOpen(false)}>{label}</Link>)}</nav>
       <div className="hdr-right">
         <Link className="icon-btn" href="/products#c-q" aria-label="Search products" onClick={() => setOpen(false)}><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg></Link>

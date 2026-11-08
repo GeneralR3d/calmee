@@ -36,12 +36,12 @@ export function WhatsAppSupport() {
   return <div className="whatsapp-support" ref={root}>
     {open && <section className="whatsapp-panel" id="whatsapp-panel" aria-labelledby="whatsapp-heading">
       <div className="whatsapp-panel-heading">
-        <h2 id="whatsapp-heading">Contact Calme</h2>
+        <h2 id="whatsapp-heading">Contact Le Calme</h2>
         <button ref={closeButton} className="icon-btn" type="button" aria-label="Close support panel" onClick={close}>
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="m6 6 12 12M6 18 18 6" /></svg>
         </button>
       </div>
-      <p>For enquiries and support, contact Calme on WhatsApp Business.</p>
+      <p>For enquiries and support, contact Le Calme on WhatsApp Business.</p>
       {businessUrl ? <a className="pill whatsapp-action" href={businessUrl} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
         : <button className="pill whatsapp-action" type="button" onClick={() => setDemoClicked(true)}>Chat on WhatsApp (demo)</button>}
       {!businessUrl && <p className="whatsapp-demo" role="status">{demoClicked ? 'This contact link is a placeholder. No message has been sent. WhatsApp Business support will be available when a business link is added.' : 'Demo contact link — no message will be sent.'}</p>}

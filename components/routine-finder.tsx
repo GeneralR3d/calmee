@@ -21,7 +21,7 @@ export function RoutineFinder() {
   const picks = routine.buy.map(handle => byHandle[handle]);
   const total = picks.reduce((sum, p) => sum + p.variants[0].price, 0);
   return <section className="band grey" id="c-routine" aria-labelledby="c-rb-h"><div className="wrap">
-    <div className="sec-intro"><p className="eyebrow">Routine Finder</p><h2 className="h-lg" id="c-rb-h">Which routine is right for you?</h2><p>Tell us how your skin feels today. We&apos;ll lay out a morning and evening routine from the Calme range.</p></div>
+    <div className="sec-intro"><p className="eyebrow">Routine Finder</p><h2 className="h-lg" id="c-rb-h">Which routine is right for you?</h2><p>Tell us how your skin feels today. We&apos;ll lay out a morning and evening routine from the Le Calme range.</p></div>
     <div className="rb-opts" role="radiogroup" aria-label="How your skin feels today">{options.map(option => <label key={option.key}><input type="radio" name="c-skin" value={option.key} checked={selected === option.key} onChange={() => { setSelected(option.key); emit('routine_result', { concern: option.key }); }} /><b>{option.title}</b><span>{option.text}</span></label>)}</div>
     <div className="rb-out" aria-live="polite"><p className="rb-note">{routine.note}</p>
       <div className="rb-cols">{[['Morning', routine.am], ['Evening', routine.pm]].map(([title, steps]) => <div className="rb-col" key={title as string}><h3>{title as string}</h3><ol>{(steps as string[][]).map(([handle, note], index) => <li key={`${handle}-${index}`}><span><Link href={`/products/${handle}`}>{byHandle[handle].title}</Link><small>{note}</small></span></li>)}</ol></div>)}</div>

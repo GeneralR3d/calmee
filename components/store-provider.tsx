@@ -118,6 +118,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           {palettes.map(p => <button key={p.key} title={p.title} aria-label={p.title} aria-pressed={palette === p.key} onClick={() => { setPaletteState(p.key); setPaletteOpen(false); }}><i style={{ background: gradient(p.colors) }} /><span>{p.name}</span></button>)}
         </div>
       </aside>}
+      </div>
+      <div className="support-dock whatsapp-dock" style={{ '--support-clearance': `${supportClearance}px` } as CSSProperties}>
       <WhatsAppSupport />
       </div>
       {consentVisible && <div ref={consentBanner} className="consent" role="region" aria-label="Cookie choices">
@@ -127,7 +129,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       <dialog ref={privacy} aria-labelledby="privacy-heading" onClick={e => { if (e.target === e.currentTarget) privacy.current?.close(); }}>
         <div className="privacy"><button className="x" aria-label="Close privacy notice" onClick={() => privacy.current?.close()}>×</button>
           <h2 id="privacy-heading">Privacy notice</h2>
-          <p>Calme follows Singapore&apos;s Personal Data Protection Act (PDPA). This notice explains what we collect and why.</p>
+          <p>Le Calme follows Singapore&apos;s Personal Data Protection Act (PDPA). This notice explains what we collect and why.</p>
           <h3>What we collect</h3>
           <ul><li><b>Orders:</b> on a live store, your name, email, phone and address are used to deliver and support your order. This demo does not send order details or process payments.</li><li><b>Newsletter:</b> your email, only if you subscribe. This demo shows a confirmation without sending a subscription.</li><li><b>Cookies:</b> necessary browser storage keeps your bag. With your permission, advertising pixels from Meta, TikTok, Google and Pinterest can measure ads when configured.</li></ul>
           <h3>Your choices</h3><p>You can accept or refuse advertising cookies, and change your mind at any time with &quot;Cookie choices&quot; in the footer. To access, correct or delete your data, or to withdraw consent, email our Data Protection Officer at privacy@calme.example.</p>

@@ -7,9 +7,9 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: { default: 'Calme | Gentle skincare for delicate skin.', template: '%s | Calme' },
-  description: 'Gentle skincare for delicate skin. Explore fragrance-free cleansers, serums and moisturisers from Calme in Singapore.',
-  openGraph: { siteName: 'Calme', type: 'website', title: 'Calme | Gentle skincare for delicate skin.', description: "Gentle skincare for delicate skin. Fragrance-free care for everyday hydration and comfort.", images: [{ url: '/img/hero-routine.webp', alt: 'The Calme Barrier Reset Routine' }] },
+  title: { default: 'Le Calme | Gentle skincare for delicate skin.', template: '%s | Le Calme' },
+  description: 'Gentle skincare for delicate skin. Explore fragrance-free cleansers, serums and moisturisers from Le Calme in Singapore.',
+  openGraph: { siteName: 'Le Calme', type: 'website', title: 'Le Calme | Gentle skincare for delicate skin.', description: "Gentle skincare for delicate skin. Fragrance-free care for everyday hydration and comfort.", images: [{ url: '/img/hero-routine.webp', alt: 'The Le Calme Barrier Reset Routine' }] },
   twitter: { card: 'summary_large_image' },
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover' };

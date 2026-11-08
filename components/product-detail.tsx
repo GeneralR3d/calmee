@@ -18,7 +18,7 @@ export function ProductDetail({ product: p }: { product: Product }) {
     const url = `${window.location.origin}/products/${p.handle}?utm_source=share&utm_medium=referral&utm_campaign=product_share`;
     const nativeShare = typeof navigator.share === 'function';
     try {
-      if (nativeShare) await navigator.share({ title: `${p.title} | Calme`, text: p.short, url });
+      if (nativeShare) await navigator.share({ title: `${p.title} | Le Calme`, text: p.short, url });
       else { await navigator.clipboard.writeText(url); toast('Link copied. Share it with someone who needs a little calm.'); }
       emit('share', { method: nativeShare ? 'native' : 'copy', ...productEvent(p, variant) });
     } catch (error) {

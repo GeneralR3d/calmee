@@ -13,7 +13,7 @@ export function FeaturedProducts() { return (
     <p className="sub">Try the routine for 14 days.</p>
     <p className="price-note"><span id="c-kit-price">S$19</span>, with S$19 back on your first full-size order.</p>
     <div className="cta-row"><AddToBag className="pill solid sm" handle="discovery-kit">Buy</AddToBag><Link className="pill sm" href="/products/discovery-kit">What&apos;s inside</Link></div>
-    <img src="/img/discovery-kit.webp" loading="lazy" decoding="async" width="800" height="800" alt="Five Calme travel-size products" />
+    <img src="/img/discovery-kit.webp" loading="lazy" decoding="async" width="800" height="800" alt="Five Le Calme travel-size products" />
   </div>
   <div className="tile">
     <h2>Barrier Repair Cream</h2>

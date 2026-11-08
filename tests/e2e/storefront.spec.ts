@@ -24,9 +24,9 @@ test('navigation, catalogue, product routes and blog', async ({ page }) => {
   await page.goForward();
   await expect(page).toHaveURL('/products/centella-calming-serum');
   await nav.getByRole('link', {name:'Blog',exact:true}).click();
-  await page.getByRole('link', {name:'Read Welcome to Calme'}).click();
+  await page.getByRole('link', {name:'Read Welcome to Le Calme'}).click();
   await expect(page).toHaveURL('/blog/welcome-to-calme');
-  await expect(page.getByRole('heading', {level:1})).toHaveText('Welcome to Calme');
+  await expect(page.getByRole('heading', {level:1})).toHaveText('Welcome to Le Calme');
 });
 
 test('cream sizes, persistent cart, quantity controls and removal', async ({ page }) => {
@@ -160,7 +160,7 @@ test('delicate-skin opening works without the old animation', async ({ page }) =
   await expect(page.locator('.hero-img')).toHaveJSProperty('complete', true);
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /Gentle skincare for delicate skin\./);
   await expect(page.locator('body')).not.toContainText(/eczema|flare-ups|seal it back|seal it in|rebuild|damaged skin barrier/i);
-  await page.getByRole('link', {name:'Calme home',exact:true}).click();
+  await page.getByRole('link', {name:'Le Calme home',exact:true}).click();
   await expect(page.getByRole('heading', {level:1})).toBeVisible();
   expect(media).toEqual([]);
 });
@@ -170,8 +170,8 @@ test('WhatsApp support opens, dismisses and keeps its demo action local', async 
   const launcher = page.getByRole('button', {name:'Open WhatsApp support',exact:true});
   await expect(launcher).toHaveAttribute('aria-expanded', 'false');
   await launcher.click();
-  const panel = page.getByRole('region', {name:'Contact Calme',exact:true});
-  await expect(panel).toContainText('For enquiries and support, contact Calme on WhatsApp Business.');
+  const panel = page.getByRole('region', {name:'Contact Le Calme',exact:true});
+  await expect(panel).toContainText('For enquiries and support, contact Le Calme on WhatsApp Business.');
   await expect(page.getByRole('button', {name:'Close support panel'})).toBeFocused();
   await page.getByRole('button', {name:'Chat on WhatsApp (demo)',exact:true}).click();
   await expect(panel.getByRole('status')).toContainText('placeholder');
@@ -201,7 +201,7 @@ test('sitemap lists working destinations and retains support actions', async ({ 
   await expect(page.getByRole('navigation', {name:'Main',exact:true}).getByRole('link', {name:'Sitemap',exact:true})).toHaveAttribute('aria-current','page');
   const main = page.locator('main');
   await expect(main.locator('a[href^="/products/"]')).toHaveCount(9);
-  await expect(main.getByRole('link', {name:'Welcome to Calme',exact:true})).toHaveAttribute('href','/blog/welcome-to-calme');
+  await expect(main.getByRole('link', {name:'Welcome to Le Calme',exact:true})).toHaveAttribute('href','/blog/welcome-to-calme');
   const destinations = await main.locator('a').evaluateAll(links => [...new Set(links.map(link => link.getAttribute('href')!))]);
   for (const href of destinations) {
     expect((await request.get(href)).status(), href).toBe(200);
@@ -222,7 +222,7 @@ test('support dock avoids mobile cookie controls, colours and cart feedback', as
   await page.goto('/products');
   await page.getByRole('button', {name:'Cookie choices',exact:true}).click();
   await page.getByRole('button', {name:'Open WhatsApp support',exact:true}).click();
-  const dock = page.locator('.support-dock');
+  const dock = page.locator('.whatsapp-dock');
   const consent = page.getByRole('region', {name:'Cookie choices'});
   await expect.poll(async () => {
     const a = await dock.boundingBox();

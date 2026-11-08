@@ -64,7 +64,8 @@ html{scroll-behavior:smooth}html,body{background:#FFFFFF}body{margin:0}body::bef
 .calme .link-btn { background: none; border: 0; padding: 0; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-size: inherit; }
 .calme .hdr { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; background: rgba(250, 250, 252, .82); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0, 0, 0, .06); }
 .calme .hdr-in { display: flex; align-items: center; justify-content: space-between; height: 48px; gap: 16px; }
-.calme .logo { font-size: 21px; font-weight: 600; letter-spacing: .14em; color: var(--ink); }
+.calme .logo { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap; font-size: 21px; font-weight: 600; letter-spacing: .04em; color: var(--ink); }
+.calme .logo-mark { display: block; width: 36px; height: 25px; object-fit: contain; }
 .calme .logo:hover { text-decoration: none; }
 .calme .nav { display: flex; gap: 30px; }
 .calme .nav a { color: var(--ink); font-size: 13px; opacity: .85; letter-spacing: -.01em; }
@@ -490,7 +491,8 @@ html{scroll-behavior:smooth}html,body{background:#FFFFFF}body{margin:0}body::bef
 .calme .support-dock { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); bottom: max(calc(16px + env(safe-area-inset-bottom, 0px)), var(--support-clearance, 0px)); z-index: 80; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; max-width: calc(100vw - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-height: calc(100dvh - max(16px, var(--support-clearance, 0px)) - 24px); padding: 3px; margin-left: -3px; }
 .calme .support-dock .palette { position: static; flex-shrink: 0; max-width: 100%; flex-wrap: wrap; }
 .calme .support-dock .pal-opts { flex-wrap: wrap; }
-.calme .whatsapp-support { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-height: 0; max-width: 100%; }
+.calme .whatsapp-dock { left: auto; right: max(16px, env(safe-area-inset-right, 0px)); align-items: flex-end; margin-left: 0; margin-right: -3px; }
+.calme .whatsapp-support { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; min-height: 0; max-width: 100%; }
 .calme .whatsapp-launcher { display: inline-flex; justify-content: center; align-items: center; width: 56px; height: 56px; border: 0; border-radius: 50%; color: #fff; background: #087f44; cursor: pointer; flex-shrink: 0; transition: background-color .2s ease-out; }
 .calme .whatsapp-launcher:hover { background: #066735; }
 .calme .whatsapp-panel { overflow-y: auto; min-height: 0; width: 336px; max-width: 100%; padding: 16px 20px 20px; background: var(--white); border: 1px solid var(--hair); border-radius: 16px; color: var(--ink); }
