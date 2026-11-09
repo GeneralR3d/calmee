@@ -6,7 +6,7 @@ export type BlogPost = {
   imageAlt: string;
   date: string;
   readingTime: string;
-  body?: 'skincare-basics';
+  body?: 'skincare-basics' | 'ingredient-guide';
   paragraphs?: string[];
 };
 
@@ -15,6 +15,15 @@ export function formatPostDate(date: string) {
 }
 
 export const posts: BlogPost[] = [{
+  slug: 'skincare-ingredients-ph-and-marketing-claims',
+  title: 'Skincare Ingredients, pH and Claims: A Buyer’s Guide',
+  excerpt: 'Understand skincare pH, panthenol, ceramides, cholesterol and fatty acids, plus how to spot misleading claims when shopping for sensitive skin.',
+  image: '/img/ceramide-recovery-serum.webp',
+  imageAlt: 'Le Calme Ceramide Recovery Serum, a skincare product with ceramides, cholesterol and fatty acids',
+  date: '2026-11-09',
+  readingTime: '8 min read',
+  body: 'ingredient-guide',
+}, {
   slug: 'cleanser-serum-moisturiser-differences',
   title: 'Cleanser, Serum and Moisturiser: What’s the Difference?',
   excerpt: 'Learn how cleansers, serums and moisturisers differ, which steps sensitive skin needs, and how to build a gentle routine with Le Calme.',

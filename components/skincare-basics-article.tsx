@@ -77,6 +77,7 @@ export function SkincareBasicsArticle() {
         <li>Finish with moisturiser.</li>
       </ol>
       <p>For sensitive skin, keep the number of new products small and test each on a small area before introducing it fully. If a product causes irritation, stop using it. Cleveland Clinic’s <a href="https://health.clevelandclinic.org/proper-skin-care-product-order">skincare layering guide</a> offers more detail on product order and optional steps.</p>
+      <p>Want to understand what is inside each bottle? Read our <Link href="/blog/skincare-ingredients-ph-and-marketing-claims">guide to skincare ingredients, pH and marketing claims</Link> before choosing your next product.</p>
     </section>
 
     <section id="le-calme-sensitive-skin" className="article-range">
