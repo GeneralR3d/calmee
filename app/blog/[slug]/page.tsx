@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { formatPostDate, posts } from '@/lib/blog';
 import { SkincareBasicsArticle } from '@/components/skincare-basics-article';
 import { SkincareIngredientsArticle } from '@/components/skincare-ingredients-article';
+import { NighttimeRoutineArticle } from '@/components/nighttime-routine-article';
 import { siteUrl } from '@/lib/site';
 type Props = { params: Promise<{ slug: string }> };
 export const dynamicParams = false;
@@ -43,7 +44,7 @@ export default async function BlogPost({ params }: Props) {
     <header className="sec-intro"><p className="eyebrow">The Le Calme journal</p><h1 className="h-xl">{post.title}</h1><p className="article-date"><time dateTime={post.date}>{formatPostDate(post.date)}</time> · {post.readingTime}</p></header>
     <img className={`article-image${post.body ? ' article-image-compact' : ''}`} src={post.image} alt={post.imageAlt} width={post.body ? 800 : 1100} height={post.body ? 800 : 550} />
     <div className="article-body"><p className="article-lead">{post.excerpt}</p>
-      {post.body === 'ingredient-guide' ? <SkincareIngredientsArticle /> : post.body === 'skincare-basics' ? <SkincareBasicsArticle /> : <>
+      {post.body === 'nighttime-routine' ? <NighttimeRoutineArticle /> : post.body === 'ingredient-guide' ? <SkincareIngredientsArticle /> : post.body === 'skincare-basics' ? <SkincareBasicsArticle /> : <>
         {post.paragraphs?.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
         <div className="cta-row"><Link className="pill solid" href="/products">Explore the range</Link><Link className="pill" href="/#c-routine">Find your routine</Link></div>
       </>}

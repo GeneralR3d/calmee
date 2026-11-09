@@ -6,7 +6,7 @@ export type BlogPost = {
   imageAlt: string;
   date: string;
   readingTime: string;
-  body?: 'skincare-basics' | 'ingredient-guide';
+  body?: 'skincare-basics' | 'ingredient-guide' | 'nighttime-routine';
   paragraphs?: string[];
 };
 
@@ -15,6 +15,15 @@ export function formatPostDate(date: string) {
 }
 
 export const posts: BlogPost[] = [{
+  slug: 'nighttime-skincare-routine-order',
+  title: 'Nighttime Skincare Routine: The Right Order for Each Step',
+  excerpt: 'Learn the right nighttime skincare routine order, from cleansing to moisturising, with optional treatments and gentle choices for sensitive skin.',
+  image: '/img/barrier-reset-routine.webp',
+  imageAlt: 'Le Calme Barrier Cleansing Oil, Gentle Cream Cleanser, Ceramide Recovery Serum and Barrier Repair Cream',
+  date: '2026-11-09',
+  readingTime: '8 min read',
+  body: 'nighttime-routine',
+}, {
   slug: 'skincare-ingredients-ph-and-marketing-claims',
   title: 'Skincare Ingredients, pH and Claims: A Buyer’s Guide',
   excerpt: 'Understand skincare pH, panthenol, ceramides, cholesterol and fatty acids, plus how to spot misleading claims when shopping for sensitive skin.',
