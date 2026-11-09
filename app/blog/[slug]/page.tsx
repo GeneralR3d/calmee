@@ -41,7 +41,7 @@ export default async function BlogPost({ params }: Props) {
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/blog">Blog</Link><span aria-hidden="true">/</span><span>{post.title}</span></nav>
     <header className="sec-intro"><p className="eyebrow">The Le Calme journal</p><h1 className="h-xl">{post.title}</h1><p className="article-date"><time dateTime={post.date}>{formatPostDate(post.date)}</time> · {post.readingTime}</p></header>
-    <img className="article-image" src={post.image} alt={post.imageAlt} width="1100" height="550" />
+    <img className={`article-image${post.body ? ' article-image-compact' : ''}`} src={post.image} alt={post.imageAlt} width={post.body ? 800 : 1100} height={post.body ? 800 : 550} />
     <div className="article-body"><p className="article-lead">{post.excerpt}</p>
       {post.body === 'ingredient-guide' ? <SkincareIngredientsArticle /> : post.body === 'skincare-basics' ? <SkincareBasicsArticle /> : <>
         {post.paragraphs?.map(paragraph => <p key={paragraph}>{paragraph}</p>)}

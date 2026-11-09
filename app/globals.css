@@ -484,6 +484,7 @@ html{scroll-behavior:smooth}html,body{background:#FFFFFF}body{margin:0}body::bef
 .calme .article-page { padding-top: 48px; }
 .calme .article-page .article-date { font-size: 14px; }
 .calme .article-image { width: 100%; height: auto; border-radius: 18px; }
+.calme .article-image-compact { width: min(100%, 440px); margin-inline: auto; }
 .calme .article-body { max-width: 680px; margin: 40px auto 0; display: grid; gap: 24px; line-height: 1.7; }
 .calme .article-lead { font-size: 22px; line-height: 1.4; }
 .calme .article-placeholder { font-size: 14px; }
@@ -503,6 +504,7 @@ html{scroll-behavior:smooth}html,body{background:#FFFFFF}body{margin:0}body::bef
 .calme .article-product p { font-size: 16px; line-height: 1.6; }
 .calme .article-product .article-product-role { color: var(--mute); font-size: 14px; }
 @media (max-width: 540px) {
+  .calme .article-image-compact { width: min(100%, 280px); }
   .calme .article-products { grid-template-columns: 1fr; }
   .calme .blog-copy { padding: 24px; }
   .calme .blog-copy h2 { font-size: 28px; }
