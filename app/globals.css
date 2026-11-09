@@ -473,7 +473,7 @@ html{scroll-behavior:smooth}html,body{background:#FFFFFF}body{margin:0}body::bef
 .calme .summary .row > :last-child { white-space: nowrap; }
 .calme .confirmation { max-width: 680px; margin-inline: auto; gap: 20px; }
 .calme .confirmation h1:focus { outline: none; }
-.calme .blog-list { max-width: 900px; margin-inline: auto; }
+.calme .blog-list { max-width: 900px; margin-inline: auto; display: grid; gap: 40px; }
 .calme .blog-preview { background: var(--white); border-radius: 18px; overflow: hidden; }
 .calme .blog-image { display: block; background: var(--white); }
 .calme .blog-image img { width: 100%; height: auto; aspect-ratio: 2; object-fit: cover; }
@@ -488,6 +488,25 @@ html{scroll-behavior:smooth}html,body{background:#FFFFFF}body{margin:0}body::bef
 .calme .article-lead { font-size: 22px; line-height: 1.4; }
 .calme .article-placeholder { font-size: 14px; }
 .calme .article-body .cta-row { justify-content: flex-start; margin-top: 8px; }
+.calme .blog-copy h2 a, .calme .article-body a:not(.pill) { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
+.calme .article-body a:not(.pill):hover { text-decoration-thickness: 2px; }
+.calme .article-body section { display: grid; gap: 18px; margin-top: 24px; }
+.calme .article-body h2 { font-size: clamp(26px, 3vw, 34px); line-height: 1.2; }
+.calme .article-body h3 { font-size: 21px; line-height: 1.3; margin-top: 12px; }
+.calme .article-body ul, .calme .article-body ol { margin: 0; padding-left: 24px; }
+.calme .article-body li + li { margin-top: 8px; }
+.calme .article-contents { padding-block: 24px; border-block: 1px solid var(--hair); display: grid; gap: 18px; }
+.calme .article-range { padding-top: 32px; border-top: 1px solid var(--hair); }
+.calme .article-products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; row-gap: 36px; margin-block: 8px; }
+.calme .article-product { display: grid; align-content: start; gap: 10px; }
+.calme .article-product img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+.calme .article-product p { font-size: 16px; line-height: 1.6; }
+.calme .article-product .article-product-role { color: var(--mute); font-size: 14px; }
+@media (max-width: 540px) {
+  .calme .article-products { grid-template-columns: 1fr; }
+  .calme .blog-copy { padding: 24px; }
+  .calme .blog-copy h2 { font-size: 28px; }
+}
 @media (max-width: 760px) {
   .calme .cart-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .calme .cart-summary { position: static; }
