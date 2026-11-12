@@ -59,6 +59,7 @@ test('checkout discounts, validation and simulated order', async ({ page }) => {
   await page.getByLabel('Discount code', {exact:true}).fill('WELCOME10');
   await page.getByRole('button', {name:'Apply',exact:true}).click();
   await page.getByRole('button', {name:'Place demo order',exact:true}).click();
+  await expect(page).toHaveURL('/checkout');
   await expect(page.getByRole('heading', {name:/Thank you/})).toHaveCount(0);
   await page.getByLabel('Email', {exact:true}).fill('shopper@example.com');
   await page.getByLabel('First name').fill('Test');
@@ -68,8 +69,11 @@ test('checkout discounts, validation and simulated order', async ({ page }) => {
   await page.getByLabel('Mobile', {exact:true}).fill('+65 9123 4567');
   await page.getByLabel('Bank transfer').check();
   await page.getByRole('button', {name:'Place demo order',exact:true}).click();
+  await expect(page).toHaveURL('/thank-you');
   await expect(page.getByRole('heading', {name:/Thank you/})).toBeVisible();
   await expect(page.getByText(/No payment has been taken/)).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('Total S$30.10 · Bank transfer', {exact:true})).toBeVisible();
   await page.goto('/cart');
   await expect(page.getByText('Your bag is empty.')).toBeVisible();
 });
@@ -99,6 +103,8 @@ test('legacy links, missing pages, empty checkout and mobile navigation', async 
   expect((await page.goto('/blog/not-a-post'))?.status()).toBe(404);
   await page.goto('/checkout');
   await expect(page.getByText('Your bag is empty.')).toBeVisible();
+  await page.goto('/thank-you');
+  await expect(page.getByRole('heading', {name:'No demo order to show'})).toBeVisible();
   await page.setViewportSize({width:390,height:844});
   await page.goto('/products');
   await page.getByRole('button', {name:'Open menu',exact:true}).click();

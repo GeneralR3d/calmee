@@ -12,11 +12,16 @@ import { WhatsAppSupport } from './whatsapp-support';
 
 type Consent = 'all' | 'necessary' | null;
 type AnalyticsState = { consent: Consent; askConsent: boolean; showInspector: boolean; linkCode: string; campaign: Record<string, string>; log: { name: string; status: string }[] };
+type DemoOrder = { number: string; total: number; method: 'PayNow' | 'Bank transfer' };
+const demoOrderKey = 'calme-demo-order';
+
 type Store = {
   items: CartItem[]; ready: boolean; count: number;
   add: (items: CartItem[], message?: string) => void;
   update: (id: string, qty: number) => void;
-  clear: () => void; toast: (message: string, viewBag?: boolean) => void;
+  order: DemoOrder | null;
+  completeOrder: (order: DemoOrder) => void;
+  toast: (message: string, viewBag?: boolean) => void;
   palette: string; setPalette: (value: string) => void;
   analytics: AnalyticsState; openCookies: () => void; openPrivacy: () => void;
 };
@@ -35,6 +40,7 @@ const emptyAnalytics: AnalyticsState = { consent: null, askConsent: false, showI
 export function StoreProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [order, setOrder] = useState<DemoOrder | null>(null);
   const [ready, setReady] = useState(false);
   const [palette, setPaletteState] = useState(config.palette);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -50,6 +56,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setItems(sanitiseCart(readStorage('calme-demo-cart')));
+    const savedOrder = readStorage(demoOrderKey, true) as Partial<DemoOrder> | null;
+    if (
+      typeof savedOrder?.number === 'string' &&
+      typeof savedOrder.total === 'number' &&
+      Number.isFinite(savedOrder.total) &&
+      (savedOrder.method === 'PayNow' || savedOrder.method === 'Bank transfer')
+    ) {
+      setOrder({ number: savedOrder.number, total: savedOrder.total, method: savedOrder.method });
+    }
     const storedPalette = readStorage('calme-palette');
     if (config.paletteSwitcher && palettes.some(p => p.key === storedPalette)) setPaletteState(storedPalette as string);
     setReady(true);
@@ -91,7 +106,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     emit('add_to_cart', { currency: 'SGD', value: eventItems.reduce((sum: number, item: { price: number; quantity: number }) => sum + item.price * item.quantity, 0), items: eventItems });
   }, [toast]);
   const update = useCallback((id: string, qty: number) => setItems(current => changeQuantity(current, id, qty)), []);
-  const clear = useCallback(() => setItems([]), []);
+  const completeOrder = useCallback((order: DemoOrder) => {
+    writeStorage(demoOrderKey, order, true);
+    setOrder(order);
+    setItems([]);
+  }, []);
   const count = totals(items).count;
   const selectedPalette = palettes.find(p => p.key === palette) || palettes[0];
   const gradient = (colors: string[]) => `linear-gradient(90deg,${colors[0]} 50%,${colors[1]} 50%)`;
@@ -108,7 +127,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => { observer.disconnect(); window.removeEventListener('resize', measure); };
   }, [consentVisible, notification]);
 
-  return <StoreContext.Provider value={{ items, ready, count, add, update, clear, toast, palette, setPalette: setPaletteState, analytics, openCookies: () => setCookieOpen(true), openPrivacy: () => privacy.current?.showModal() }}>
+  return <StoreContext.Provider value={{ items, ready, count, add, update, order, completeOrder, toast, palette, setPalette: setPaletteState, analytics, openCookies: () => setCookieOpen(true), openPrivacy: () => privacy.current?.showModal() }}>
     <div className="calme" id="calme" data-palette={palette}>
       {children}
       <div className="support-dock" style={{ '--support-clearance': `${supportClearance}px` } as CSSProperties}>

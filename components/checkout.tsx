@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { cartLines, discountFor, money, totals } from '@/lib/cart';
 import { emit, productEvent } from '@/lib/analytics';
@@ -8,13 +9,13 @@ import { useStore } from './store-provider';
 import { EmptyBag } from './cart-page';
 
 export function Checkout() {
-  const { items, ready, clear, analytics } = useStore();
+  const router = useRouter();
+  const { items, ready, completeOrder, analytics } = useStore();
   const [codeInput, setCodeInput] = useState('');
   const [code, setCode] = useState('');
   const [message, setMessage] = useState('');
   const [codeError, setCodeError] = useState(false);
   const [pay, setPay] = useState('paynow');
-  const [order, setOrder] = useState<{ number: string; total: number; method: string } | null>(null);
   const initialised = useRef(false);
   const submitted = useRef(false);
   const lines = cartLines(items);
@@ -37,11 +38,14 @@ export function Checkout() {
     event.preventDefault();
     if (!event.currentTarget.reportValidity() || submitted.current || !t.count) return;
     submitted.current = true;
-    setOrder({ number: `CALME-${Math.floor(event.timeStamp).toString().padStart(6, "0").slice(-6)}`, total: t.total, method: pay === 'paynow' ? 'PayNow' : 'Bank transfer' });
+    completeOrder({
+      number: `CALME-${Math.floor(event.timeStamp).toString().padStart(6, '0').slice(-6)}`,
+      total: t.total,
+      method: pay === 'paynow' ? 'PayNow' : 'Bank transfer',
+    });
     emit('purchase_demo', { order: 'demo', currency: 'SGD', value: t.total / 100, items: lines.flatMap(line => productEvent(line.product, line.variant, line.qty).items) });
-    clear();
+    router.replace('/thank-you');
   };
-  if (order) return <section className="band"><div className="wrap"><div className="done confirmation"><span className="tick" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12l5 5 9-10" /></svg></span><p className="eyebrow">Demo order {order.number}</p><h1 className="h-lg" tabIndex={-1} ref={node => node?.focus()}>Thank you. A little calm is on its way.</h1><p>Total {money(order.total)} · {order.method}</p><p className="muted">This was a simulated order. No payment has been taken and no products will be shipped.</p><Link className="pill solid" href="/products">Continue shopping</Link></div></div></section>;
   if (!ready) return <div className="wrap page-loading" role="status">Loading checkout…</div>;
   if (!lines.length) return <section className="band"><div className="wrap"><h1 className="h-lg center">Checkout</h1><EmptyBag /></div></section>;
   return <section className="band checkout-page"><div className="wrap"><nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/cart">Your bag</Link><span aria-hidden="true">/</span><span>Checkout</span></nav>
